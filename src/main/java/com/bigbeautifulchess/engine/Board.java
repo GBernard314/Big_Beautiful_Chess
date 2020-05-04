@@ -956,6 +956,10 @@ public class Board {
 		}
 	}
 
+	/**
+	 * To verify is the actual player has lost
+	 * @return true if lost false if not
+	 */
 	public boolean isCheckMate() {
 		// first of all the player needs to be checked
 		if (!isChecked()) {
