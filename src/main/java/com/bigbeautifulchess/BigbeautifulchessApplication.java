@@ -2,9 +2,9 @@ package com.bigbeautifulchess;
 
 import java.util.ArrayList;
 
-import engine.*;
-import tools.Coord;
-import tools.Table;
+import com.bigbeautifulchess.engine.Board;
+import com.bigbeautifulchess.engine.Piece;
+import com.bigbeautifulchess.tools.Coord;
 
 public class BigbeautifulchessApplication {
 
