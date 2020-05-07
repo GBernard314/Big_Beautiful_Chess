@@ -25,6 +25,23 @@ public class Board {
 	 * 1666 if player 2 is being checked
 	 */
 	private int result;
+	
+	/**
+	 * Empty board
+	 * @param just to over charge the constructor
+	 */
+	public Board(boolean b) {
+		super();
+		Piece[][] c = new Piece[8][8];
+		for (int i = 0; i < c.length; i++) {
+			for (int j = 0; j < c[i].length; j++) {
+				c[i][j] = new Piece(i, j);
+			}
+		}
+		this.cells = c;
+		this.turn = 0;
+		this.result = -1;
+	}
 
 	/**
 	 * Generate a ready-to-play board, initialized with every piece
@@ -79,7 +96,11 @@ public class Board {
 	}
 
 	public void setCells(Piece[][] cells) {
-		this.cells = cells;
+		for (int i = 0; i < cells.length; i++) {
+			for (int j = 0; j < cells[i].length; j++) {
+				this.cells[i][j] = cells[i][j];
+			}
+		}
 	}
 
 	public int getTurn() {
@@ -268,7 +289,9 @@ public class Board {
 	 */
 	public void cleanMovesKing(Piece king) {
 		ArrayList<Coord> impossible_moves = new ArrayList<Coord>();
-		ArrayList<Coord> king_final_moves = king.getMoves();
+		ArrayList<Coord> king_final_moves = new ArrayList<Coord>();
+		king_final_moves.addAll(king.getTheoretical_moves());
+
 		// We verify if the destination cells contains same color piece
 		for (int i = 0; i < king.getMoves().size(); i++) {
 			int x = king.getMoves().get(i).getX();
@@ -916,10 +939,10 @@ public class Board {
 		// We must check that the hunted is reachable by the hunter
 		for (int i = 0; i < hunter.getMoves().size(); i++) {
 			if (!hunter.getMoves().contains(new Coord(hunted.getC().getX(), hunted.getC().getY()))) {
-				hunted.printPiece();
-				System.out.println("is out of reach for");
-				hunter.printPiece();
-				return;
+				//hunted.printPiece();
+				//System.out.println("is out of reach for");
+				//hunter.printPiece();
+				//return;
 			}
 		}
 

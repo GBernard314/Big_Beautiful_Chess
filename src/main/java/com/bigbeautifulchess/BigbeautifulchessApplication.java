@@ -29,6 +29,9 @@ public class BigbeautifulchessApplication {
 		
 		
 		Board b = new Board();
+		Piece bk = b.getPieceOnCell(0, 4);
+		System.out.println("theoretical king moves nb = " + bk.getTheoretical_moves().size());
+
 		b.updateMoves();
 		
 		for (int i = 0; i < removed.size(); i++) {
@@ -39,22 +42,27 @@ public class BigbeautifulchessApplication {
 		
 		//white turn
 		b.eat(b.getPieceOnCell(7, 0), new Piece(5, 0));
+		System.out.println("theoretical king moves nb = " + bk.getTheoretical_moves().size());
 		b.printBoard();
 		
 		//black turn
 		b.eat(b.getPieceOnCell(0, 1), new Piece(2, 0));
+		System.out.println("theoretical king moves nb = " + bk.getTheoretical_moves().size());
 		b.printBoard();
 		
 		//white turn
 		b.eat(b.getPieceOnCell(5, 0), new Piece(5, 2));
+		System.out.println("theoretical king moves nb = " + bk.getTheoretical_moves().size());
 		b.printBoard();
 		
 		//black turn
 		b.eat(b.getPieceOnCell(2, 0), new Piece(0, 1));
+		System.out.println("theoretical king moves nb = " + bk.getTheoretical_moves().size());
 		b.printBoard();
 		
 		//white turn
 		b.eat(b.getPieceOnCell(5, 2), new Piece(0, 2));
+		System.out.println("theoretical king moves nb = " + bk.getTheoretical_moves().size());
 		b.printBoard();
 		
 		

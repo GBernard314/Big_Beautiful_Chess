@@ -27,6 +27,11 @@ public class Piece {
 	private char type;
 
 	/**
+	 * Contains theoretical moves on the board
+	 */
+	private ArrayList<Coord> theoretical_moves;
+	
+	/**
 	 * Contains all possible moves on the board
 	 */
 	private ArrayList<Coord> moves;
@@ -49,6 +54,7 @@ public class Piece {
 		this.coord = new Coord(x, y);
 		this.color = color;
 		this.type = type;
+		this.theoretical_moves = moves();
 		this.moves = moves();
 		this.moved = false;
 	}
@@ -65,9 +71,18 @@ public class Piece {
 		this.color = -1;
 		this.type = 'e';
 		this.moves = new ArrayList<Coord>();
+		this.theoretical_moves = new ArrayList<Coord>();
 		this.moved = false;
 	}
 	
+	public Coord getCoord() {
+		return coord;
+	}
+
+	public void setCoord(Coord coord) {
+		this.coord = coord;
+	}
+
 	public Coord getC() {
 		return coord;
 	}
@@ -92,6 +107,14 @@ public class Piece {
 		this.type = type;
 	}
 
+	public ArrayList<Coord> getTheoretical_moves() {
+		return theoretical_moves;
+	}
+
+	public void setTheoretical_moves(ArrayList<Coord> theoretical_moves) {
+		this.theoretical_moves = theoretical_moves;
+	}
+
 	public ArrayList<Coord> getMoves() {
 		return moves;
 	}
@@ -108,9 +131,53 @@ public class Piece {
 		this.moved = moved;
 	}
 
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + color;
+		result = prime * result + ((coord == null) ? 0 : coord.hashCode());
+		result = prime * result + (moved ? 1231 : 1237);
+		result = prime * result + ((moves == null) ? 0 : moves.hashCode());
+		result = prime * result + type;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Piece other = (Piece) obj;
+		if (color != other.color)
+			return false;
+		if (coord == null) {
+			if (other.coord != null)
+				return false;
+		} else if (!coord.equals(other.coord))
+			return false;
+		if (moved != other.moved)
+			return false;
+		if (moves == null) {
+			if (other.moves != null)
+				return false;
+		} else if (!moves.equals(other.moves))
+			return false;
+		if (type != other.type)
+			return false;
+		return true;
+	}
+
+	
+
 	/*
 	 * Methods
 	 */
+
 
 	/**
 	 * Print in terminal all the fields of a Piece
@@ -172,6 +239,7 @@ public class Piece {
 
 		System.out.print("(" + getC().getX() + ";" + getC().getY() + ")\n");
 	}
+	
 
 	/**
 	 * Gives allowed moves for the King, on the board not checking for emptiness of
@@ -183,7 +251,7 @@ public class Piece {
 		// intermediate list
 		ArrayList<Coord> king_moves = new ArrayList<Coord>();
 
-		// First we add every moves even if it's they are impossible
+		// First we add every moves even if they are impossible
 		// N
 		king_moves.add(new Coord(getC().getX(), getC().getY() + 1));
 		// NE
@@ -230,7 +298,7 @@ public class Piece {
 		// else he only goes down
 		else {
 			// if the pawn never moved it can move 2 cells
-			if (!getMoved()) {
+			if (!this.getMoved()) {
 				pawn_moves.add(new Coord(x + 1, y));
 				pawn_moves.add(new Coord(x + 2, y));
 			}
@@ -356,7 +424,7 @@ public class Piece {
 	 * Rework moves list by deleting those outside board
 	 * 
 	 * @param mov List with outside moves in it
-	 * @return List without outside moves int it
+	 * @return List without outside moves in it
 	 */
 	ArrayList<Coord> insideMoves(ArrayList<Coord> mov) {
 		ArrayList<Coord> mov_out = new ArrayList<Coord>();
@@ -394,5 +462,4 @@ public class Piece {
 			return new ArrayList<Coord>();
 		}
 	}
-
 }
