@@ -1,5 +1,7 @@
 package com.bigbeautifulchess.engine;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 import com.bigbeautifulchess.tools.*;
@@ -25,10 +27,31 @@ public class Board {
 	 * 1666 if player 2 is being checked
 	 */
 	private int result;
+
+	/**
+	 * Time allowed for black player in seconds
+	 */
+	private int time_black = 2400;
+
+	/**
+	 * Time allowed for white player in seconds
+	 */
+	private int time_white = 2400;
+
+	/**
+	 * We need to store a date in order to manage time
+	 */
+	private LocalDateTime storage;
+
+	/**
+	 * We save every move made
+	 */
+	private ArrayList<Mov> historic;
+	
 	
 	/**
-	 * Empty board
-	 * @param just to over charge the constructor
+	 * To have an empty board
+	 * @param b
 	 */
 	public Board(boolean b) {
 		super();
@@ -41,6 +64,7 @@ public class Board {
 		this.cells = c;
 		this.turn = 0;
 		this.result = -1;
+		this.historic = new ArrayList<Mov>();
 	}
 
 	/**
@@ -82,6 +106,8 @@ public class Board {
 		this.cells = c;
 		this.turn = 0;
 		this.result = -1;
+		this.historic = new ArrayList<Mov>();
+
 	}
 
 	public Board(Piece[][] cells, int turn, int result) {
@@ -89,6 +115,16 @@ public class Board {
 		this.cells = cells;
 		this.turn = turn;
 		this.result = result;
+		this.historic = new ArrayList<Mov>();
+
+	}
+
+	public ArrayList<Mov> getHistoric() {
+		return historic;
+	}
+
+	public void setHistoric(ArrayList<Mov> historic) {
+		this.historic = historic;
 	}
 
 	public Piece[][] getCells() {
@@ -96,9 +132,12 @@ public class Board {
 	}
 
 	public void setCells(Piece[][] cells) {
-		for (int i = 0; i < cells.length; i++) {
-			for (int j = 0; j < cells[i].length; j++) {
-				this.cells[i][j] = cells[i][j];
+		for (int i = 0; i < this.cells.length; i++) {
+			for (int j = 0; j < this.cells[i].length; j++) {
+				Piece temp = new Piece(cells[i][j].getC().getX(), cells[i][j].getC().getY(), cells[i][j].getColor(),
+						cells[i][j].getType(), cells[i][j].getMoved());
+				// this.cells[i][j] = cells[i][j];
+				this.cells[i][j] = temp;
 			}
 		}
 	}
@@ -117,6 +156,30 @@ public class Board {
 
 	public void setResult(int result) {
 		this.result = result;
+	}
+
+	public int getTime_black() {
+		return time_black;
+	}
+
+	public void setTime_black(int time_black) {
+		this.time_black = time_black;
+	}
+
+	public int getTime_white() {
+		return time_white;
+	}
+
+	public void setTime_white(int time_white) {
+		this.time_white = time_white;
+	}
+
+	public LocalDateTime getStorage() {
+		return storage;
+	}
+
+	public void setStorage(LocalDateTime storage) {
+		this.storage = storage;
 	}
 
 	public Board clone() {
@@ -155,8 +218,8 @@ public class Board {
 		} else {
 			System.out.println("Black turn");
 		}
-		//System.out.println("king moves = " + this.getKing().getMoves().size());
-		//this.getKing().printPiece();
+		// System.out.println("king moves = " + this.getKing().getMoves().size());
+		// this.getKing().printPiece();
 		if (isChecked()) {
 			if (isCheckMate()) {
 				System.out.println("🕱  check mate 🕱 ");
@@ -244,17 +307,87 @@ public class Board {
 	}
 
 	/**
+	 * Print the board in the terminal, only the board
+	 */
+	public void printBoardSimple() {
+		System.out.println("┌───┬───┬───┬───┬───┬───┬───┬───┐");
+
+		for (int i = 0; i < cells.length; i++) {
+			if (i != 0) {
+				System.out.println("├───┼───┼───┼───┼───┼───┼───┼───┤");
+			}
+			for (int j = 0; j < cells[i].length; j++) {
+				switch (cells[i][j].getType()) {
+				case 'k':
+					if (cells[i][j].getColor() == 0) {
+						System.out.print("│ ♔  ");
+					} else {
+						System.out.print("│ ♚  ");
+					}
+					break;
+
+				case 'q':
+					if (cells[i][j].getColor() == 0) {
+						System.out.print("│ ♕ ");
+					} else {
+						System.out.print("│ ♛ ");
+					}
+					break;
+
+				case 'r':
+					if (cells[i][j].getColor() == 0) {
+						System.out.print("│ ♖  ");
+					} else {
+						System.out.print("│ ♜  ");
+					}
+					break;
+
+				case 'b':
+					if (cells[i][j].getColor() == 0) {
+						System.out.print("│ ♗  ");
+					} else {
+						System.out.print("│ ♝  ");
+					}
+					break;
+
+				case 'h':
+					if (cells[i][j].getColor() == 0) {
+						System.out.print("│ ♘  ");
+					} else {
+						System.out.print("│ ♞  ");
+					}
+					break;
+
+				case 'p':
+					if (cells[i][j].getColor() == 0) {
+						System.out.print("│ □ ");
+					} else {
+						System.out.print("│ ■ ");
+					}
+					break;
+
+				default:
+					System.out.print("│   ");
+					break;
+				}
+			}
+			System.out.print("│\n");
+		}
+		System.out.println("└───┴───┴───┴───┴───┴───┴───┴───┘");
+	}
+
+	/**
 	 * Print possible destination cells in the terminal
 	 * 
-	 * @param m ArrayList of cells
+	 * @param p ArrayList of cells
 	 */
-	public void printMovements(ArrayList<Coord> m) {
+	public void printMovements(Piece p) {
 		int found = 0;
 		for (int i = 0; i < cells.length; i++) {
 			for (int j = 0; j < cells[i].length; j++) {
 
-				for (int j2 = 0; j2 < m.size(); j2++) {
-					if (m.get(j2).getX() == i && m.get(j2).getY() == j) {
+				for (int j2 = 0; j2 < p.getMoves().size(); j2++) {
+					if (p.getMoves().get(j2).getX() == i && p.getMoves().get(j2).getY() == j) {
 						System.out.print("| × ");
 						// System.out.print("|"+m.get(j2).getX()+";"+m.get(j2).getY());
 						found++;
@@ -302,10 +435,28 @@ public class Board {
 				impossible_moves.add(c);
 			}
 		}
+
+		king_final_moves.removeAll(impossible_moves);
+
+		impossible_moves.clear();
+
+		// the king cannot go in check deliberately
+		for (int i = 0; i < king_final_moves.size(); i++) {
+			Board simulation = this.clone();
+			int x = king_final_moves.get(i).getX();
+			int y = king_final_moves.get(i).getY();
+			simulation.getCells()[king.getC().getX()][king.getC().getY()] = new Piece(king.getC().getX(),
+					king.getC().getY());
+			simulation.getCells()[x][y] = new Piece(x, y, this.getTurn(), 'k');
+			if (simulation.isChecked()) {
+				impossible_moves.add(new Coord(x, y));
+			}
+		}
 		king_final_moves.removeAll(impossible_moves);
 
 		// we return ArrayList with do-able moves for king
 		king.setMoves(king_final_moves);
+
 	}
 
 	/**
@@ -318,6 +469,13 @@ public class Board {
 		ArrayList<Coord> more_moves = new ArrayList<Coord>();
 		ArrayList<Coord> pawn_final_moves = pawn.getMoves();
 		int removed = 0;
+		if (pawn.getMoved()) {
+			if (pawn.getColor() == 1) {
+				impossible_moves.add(new Coord(pawn.getC().getX()+2, pawn.getC().getY()));
+			} else {
+				impossible_moves.add(new Coord(pawn.getC().getX()-2, pawn.getC().getY()));
+			}
+		}
 
 		// We verify if the destination cells contains a piece
 		for (int i = 0; i < pawn.getMoves().size(); i++) {
@@ -708,6 +866,9 @@ public class Board {
 				case 'q':
 					cleanMovesQueen(cells[i][j]);
 					break;
+				case 'b':
+					cleanMovesBishop(cells[i][j]);
+					break;
 
 				default:
 					break;
@@ -732,6 +893,11 @@ public class Board {
 		// for the black
 		else {
 			big_rook = getPieceOnCell(0, 0);
+		}
+
+		// the king must not be in check
+		if (this.isChecked()) {
+			return false;
 		}
 
 		/**
@@ -798,7 +964,7 @@ public class Board {
 	 */
 	public boolean isSmallCastlingOk() {
 		Piece king = this.getKing();
-		// first we get the big rook
+		// first we get the small rook
 		// for the white
 		Piece small_rook;
 		if (this.getTurn() == 0) {
@@ -863,7 +1029,12 @@ public class Board {
 				soon_to_be_rook.getC().getX(), soon_to_be_rook.getC().getY(), this.getTurn(), 'r');
 
 		if (simulation.isChecked()) {
-			System.out.println("will be checked");
+			// System.out.println("will be checked");
+			return false;
+		}
+
+		// The king must no be in check already
+		if (this.isChecked()) {
 			return false;
 		}
 
@@ -896,8 +1067,11 @@ public class Board {
 				ArrayList<Coord> temp_moves = cells[i][j].getMoves();
 				for (int j2 = 0; j2 < temp_moves.size(); j2++) {
 					if (temp_moves.get(j2).equals(king.getC())) {
-						this.setResult(this.getTurn() * 1000 + 666);
-						return true;
+						if (cells[i][j].getColor() != king.getColor()) {
+							this.setResult(this.getTurn() * 1000 + 666);
+							return true;
+						}
+
 					}
 				}
 			}
@@ -923,7 +1097,7 @@ public class Board {
 	}
 
 	/**
-	 * Method to move one piece
+	 * Method to move one piece, and also manage the time between each eat()
 	 * 
 	 * @param hunter the piece to move
 	 * @param hunted the destination piece
@@ -939,10 +1113,10 @@ public class Board {
 		// We must check that the hunted is reachable by the hunter
 		for (int i = 0; i < hunter.getMoves().size(); i++) {
 			if (!hunter.getMoves().contains(new Coord(hunted.getC().getX(), hunted.getC().getY()))) {
-				//hunted.printPiece();
-				//System.out.println("is out of reach for");
-				//hunter.printPiece();
-				//return;
+				// hunted.printPiece();
+				// System.out.println("is out of reach for");
+				// hunter.printPiece();
+				// return;
 			}
 		}
 
@@ -957,8 +1131,27 @@ public class Board {
 		// little trick to alternate between 1 and 0
 		this.setTurn(1 - this.getTurn());
 
+		// we check if it's first turn, so time will start after this move
+		if (this.getTime_black() == this.getTime_white() && this.getTime_black() == 2400) {
+			this.setStorage(LocalDateTime.now());
+		} else {
+			// if it's the black turn
+			if (this.getTurn() == 1) {
+				this.setTime_black((int) ChronoUnit.SECONDS.between(this.getStorage(), LocalDateTime.now()));
+				this.setStorage(LocalDateTime.now());
+			}
+			// if it's the white turn
+			else {
+				this.setTime_white((int) ChronoUnit.SECONDS.between(this.getStorage(), LocalDateTime.now()));
+				this.setStorage(LocalDateTime.now());
+			}
+		}
+
 		// if the turn is changed automatically we update moves right after eating, else
 		// we wait for manual time switching
+		ArrayList<Mov> temp = this.getHistoric();
+		temp.add(new Mov(hunter.getC(), hunted.getC()));
+		this.setHistoric(temp);
 		updateMoves();
 	}
 
@@ -981,56 +1174,33 @@ public class Board {
 
 	/**
 	 * To verify is the actual player has lost
+	 * 
 	 * @return true if lost false if not
 	 */
 	public boolean isCheckMate() {
-		// first of all the player needs to be checked
-		if (!isChecked()) {
-			return false;
+		if (this.getKing().getMoves().size() == 0 && this.isChecked()) {
+			return true;
 		}
+		/*
 		// we get king coordinates
 		Piece king = getKing();
 		int king_moves_checked = 0;
-		
-		Board simulation = this.clone();
-		
-		//we simulate every movement possible for the king and verify if he's checked
+
+
+		// we simulate every movement possible for the king and verify if he's checked
 		for (int i = 0; i < king.getMoves().size(); i++) {
-			Piece temp = simulation.getCells()[king.getMoves().get(i).getX()][king.getMoves().get(i).getY()];
-			
-			//We move king to possible cell
-			simulation.getCells()[king.getMoves().get(i).getX()][king.getMoves().get(i).getY()] = king;
+			Board simulation = this.clone();
+			int x = simulation.getKing().getMoves().get(i).getX();
+			int y = simulation.getKing().getMoves().get(i).getY();
+
+			// We move king to possible cell
+			simulation.getCells()[x][y] = new Piece(x, y, simulation.getTurn(), 'k');
 			simulation.getCells()[king.getC().getX()][king.getC().getY()] = new Piece(king.getC().getX(), king.getC().getY());
-			
+			simulation.updateMoves();
 			if (simulation.isChecked()) {
 				king_moves_checked++;
 			}
-			
-			//then we move king back
-			simulation.getCells()[king.getMoves().get(i).getX()][king.getMoves().get(i).getY()] = temp;
-			simulation.getCells()[king.getC().getX()][king.getC().getY()] = king;
 		}
-
-		/*
-		// for every moves the king can make, we verify if he's not being checked there
-		// if we find at least one move where he's not in check it's fine
-		for (int i = 0; i < king.getMoves().size(); i++) {
-			// we run through every cells
-			for (int j = 0; j < cells.length; j++) {
-				for (int j2 = 0; j2 < cells[j].length; j2++) {
-					ArrayList<Coord> temp_moves = getCells()[j][j2].getMoves();
-					// we run through the moves of the actual piece
-					for (int k = 0; k < temp_moves.size(); k++) {
-						// if the move of the king is in the list of the piece move's we try the next
-						// king move
-						if (king.getMoves().contains(temp_moves.get(k))) {
-							king_moves_checked++;
-							i++;
-						}
-					}
-				}
-			}
-		}*/
 		// the king can't go anywhere
 		if (king_moves_checked == king.getMoves().size()) {
 			// the other player wins
@@ -1038,6 +1208,52 @@ public class Board {
 			return true;
 		}
 		return false;
+		*/
+		return false;
+	}
+	
+	/**
+	 * Perform big castling
+	 */
+	public void bigCastling() {
+		if (isBigCastlingOk()) {
+			//white
+			if (this.turn == 0) {
+				this.getCells()[7][4] = new Piece(7, 4);
+				this.getCells()[7][0] = new Piece(7, 0);
+				this.getCells()[7][2] = new Piece(7, 2, 0, 'k', true);
+				this.getCells()[7][3] = new Piece(7, 3, 0, 'r', true);
+			} 
+			//black
+			else {
+				this.getCells()[0][4] = new Piece(0, 4);
+				this.getCells()[0][0] = new Piece(0, 0);
+				this.getCells()[0][2] = new Piece(0, 2, 1, 'k', true);
+				this.getCells()[0][3] = new Piece(0, 3, 1, 'r', true);
+			}
+		}
+	}
+
+	/**
+	 * Perform small castling
+	 */
+	public void smallCastling() {
+		if (isSmallCastlingOk()) {
+			//white
+			if (this.turn == 0) {
+				this.getCells()[7][4] = new Piece(7, 4);
+				this.getCells()[7][7] = new Piece(7, 7);
+				this.getCells()[7][6] = new Piece(7, 6, 0, 'k', true);
+				this.getCells()[7][5] = new Piece(7, 5, 0, 'r', true);
+			} 
+			//black
+			else {
+				this.getCells()[0][4] = new Piece(0, 4);
+				this.getCells()[0][7] = new Piece(0, 7);
+				this.getCells()[0][6] = new Piece(0, 6, 1, 'k', true);
+				this.getCells()[0][5] = new Piece(0, 5, 1, 'r', true);
+			}
+		}
 	}
 
 }

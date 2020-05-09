@@ -58,6 +58,25 @@ public class Piece {
 		this.moves = moves();
 		this.moved = false;
 	}
+	
+	/**
+	 * Used to create a piece
+	 * 
+	 * @param x
+	 * @param y
+	 * @param color
+	 * @param type
+	 * @param moved
+	 */
+	public Piece(int x, int y, int color, char type, boolean moved) {
+		super();
+		this.coord = new Coord(x, y);
+		this.color = color;
+		this.type = type;
+		this.moved = moved;
+		this.theoretical_moves = moves();
+		this.moves = moves();
+	}
 
 	/**
 	 * Used to create an empty board cell
@@ -281,8 +300,8 @@ public class Piece {
 	 */
 	public ArrayList<Coord> pawnMoves() {
 		ArrayList<Coord> pawn_moves = new ArrayList<Coord>();
-		int x = getC().getX();
-		int y = getC().getY();
+		int x = this.getC().getX();
+		int y = this.getC().getY();
 		// if the pawn is white he can go up
 		if (getColor() == 0) {
 			// if the pawn never moved it can move 2 cells
@@ -292,7 +311,7 @@ public class Piece {
 			}
 			// else only 1 cell
 			else {
-				pawn_moves.add(new Coord(y - 1, x));
+				pawn_moves.add(new Coord(x, y-1));
 			}
 		}
 		// else he only goes down
