@@ -47,10 +47,10 @@ public class Board {
 	 * We save every move made
 	 */
 	private ArrayList<Mov> historic;
-	
-	
+
 	/**
 	 * To have an empty board
+	 * 
 	 * @param b
 	 */
 	public Board(boolean b) {
@@ -399,8 +399,23 @@ public class Board {
 					found--;
 				}
 			}
-
 			System.out.print("|\n");
+		}
+	}
+
+	/**
+	 * Print the entire historic of moves
+	 */
+	public void printHistoric() {
+		System.out.println("Historic : ");
+		for (int i = 0; i < this.historic.size(); i++) {
+			char t1 = this.historic.get(i).getP1();
+			char t2 = this.historic.get(i).getP2();
+			int x1 = this.historic.get(i).getFrom().getX();
+			int y1 = this.historic.get(i).getFrom().getY();
+			int x2 = this.historic.get(i).getTo().getX();
+			int y2 = this.historic.get(i).getTo().getY();
+			System.out.println(t1 + " : (" + x1 + ";" + y1 + ") -> " + t2 + " : (" + x2 + ";" + y2 + ")");
 		}
 	}
 
@@ -471,9 +486,9 @@ public class Board {
 		int removed = 0;
 		if (pawn.getMoved()) {
 			if (pawn.getColor() == 1) {
-				impossible_moves.add(new Coord(pawn.getC().getX()+2, pawn.getC().getY()));
+				impossible_moves.add(new Coord(pawn.getC().getX() + 2, pawn.getC().getY()));
 			} else {
-				impossible_moves.add(new Coord(pawn.getC().getX()-2, pawn.getC().getY()));
+				impossible_moves.add(new Coord(pawn.getC().getX() - 2, pawn.getC().getY()));
 			}
 		}
 
@@ -1113,12 +1128,16 @@ public class Board {
 		// We must check that the hunted is reachable by the hunter
 		for (int i = 0; i < hunter.getMoves().size(); i++) {
 			if (!hunter.getMoves().contains(new Coord(hunted.getC().getX(), hunted.getC().getY()))) {
-				// hunted.printPiece();
-				// System.out.println("is out of reach for");
-				// hunter.printPiece();
-				// return;
+				//if it's not we nullify the action
+				return;
 			}
 		}
+		
+		/*
+		if (!isLegal(hunter, hunted)) {
+			
+		}
+		*/
 
 		// in the hunter cell we put nothing
 		this.getCells()[hunter_x][hunter_y] = new Piece(hunter_x, hunter_y);
@@ -1150,9 +1169,27 @@ public class Board {
 		// if the turn is changed automatically we update moves right after eating, else
 		// we wait for manual time switching
 		ArrayList<Mov> temp = this.getHistoric();
-		temp.add(new Mov(hunter.getC(), hunted.getC()));
+		temp.add(new Mov(hunter.getType(), hunter.getC(), hunted.getType(), hunted.getC()));
 		this.setHistoric(temp);
 		updateMoves();
+	}
+
+	public boolean isLegal(Piece hunter, Piece hunted) {
+		Board simulation = new Board(this.getCells(), this.getTurn(), this.getResult());		
+		int hunter_x = hunter.getC().getX();
+		int hunter_y = hunter.getC().getY();
+		int hunted_x = hunted.getC().getX();
+		int hunted_y = hunted.getC().getY();
+
+		// in the hunter cell we put nothing
+		simulation.getCells()[hunter_x][hunter_y] = new Piece(hunter_x, hunter_y);
+		// in the hunted cell we put the hunter
+		simulation.getCells()[hunted_x][hunted_y] = new Piece(hunted_x, hunted_y, hunter.getColor(), hunter.getType());
+		
+		if (simulation.isChecked()) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -1181,50 +1218,22 @@ public class Board {
 		if (this.getKing().getMoves().size() == 0 && this.isChecked()) {
 			return true;
 		}
-		/*
-		// we get king coordinates
-		Piece king = getKing();
-		int king_moves_checked = 0;
-
-
-		// we simulate every movement possible for the king and verify if he's checked
-		for (int i = 0; i < king.getMoves().size(); i++) {
-			Board simulation = this.clone();
-			int x = simulation.getKing().getMoves().get(i).getX();
-			int y = simulation.getKing().getMoves().get(i).getY();
-
-			// We move king to possible cell
-			simulation.getCells()[x][y] = new Piece(x, y, simulation.getTurn(), 'k');
-			simulation.getCells()[king.getC().getX()][king.getC().getY()] = new Piece(king.getC().getX(), king.getC().getY());
-			simulation.updateMoves();
-			if (simulation.isChecked()) {
-				king_moves_checked++;
-			}
-		}
-		// the king can't go anywhere
-		if (king_moves_checked == king.getMoves().size()) {
-			// the other player wins
-			this.setResult(1 - this.getTurn());
-			return true;
-		}
-		return false;
-		*/
 		return false;
 	}
-	
+
 	/**
 	 * Perform big castling
 	 */
 	public void bigCastling() {
 		if (isBigCastlingOk()) {
-			//white
+			// white
 			if (this.turn == 0) {
 				this.getCells()[7][4] = new Piece(7, 4);
 				this.getCells()[7][0] = new Piece(7, 0);
 				this.getCells()[7][2] = new Piece(7, 2, 0, 'k', true);
 				this.getCells()[7][3] = new Piece(7, 3, 0, 'r', true);
-			} 
-			//black
+			}
+			// black
 			else {
 				this.getCells()[0][4] = new Piece(0, 4);
 				this.getCells()[0][0] = new Piece(0, 0);
@@ -1239,14 +1248,14 @@ public class Board {
 	 */
 	public void smallCastling() {
 		if (isSmallCastlingOk()) {
-			//white
+			// white
 			if (this.turn == 0) {
 				this.getCells()[7][4] = new Piece(7, 4);
 				this.getCells()[7][7] = new Piece(7, 7);
 				this.getCells()[7][6] = new Piece(7, 6, 0, 'k', true);
 				this.getCells()[7][5] = new Piece(7, 5, 0, 'r', true);
-			} 
-			//black
+			}
+			// black
 			else {
 				this.getCells()[0][4] = new Piece(0, 4);
 				this.getCells()[0][7] = new Piece(0, 7);
@@ -1256,4 +1265,151 @@ public class Board {
 		}
 	}
 
+	public boolean draw() {
+		if (getResult() == -1) {
+			if (impossibleCheckMate()) {
+				return true;
+			} else if (threeFoldRepetition()) {
+				return true;
+			} else if (fiftyMoves()) {
+				return true;
+			} else if (staleMate()) {
+				return true;
+			}
+			return false;
+		} else {
+			return false;
+		}
+	}
+
+	private boolean staleMate() {
+		//the player can only move the king and if he does, he'll be in check
+		return false;
+	}
+
+	private boolean threeFoldRepetition() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/**
+	 * Verify draw option according to the rule "fifty moves with nothing interesting"
+	 * 
+	 * @return
+	 */
+	public boolean fiftyMoves() {
+		ArrayList<Mov> historic = this.getHistoric();
+		
+		//If there's less than 50 moves obviously ...
+		if (historic.size() < 50) {
+			return false;
+		}
+		
+		int nb_lunch = 0;
+		int nb_pawn_moves = 0;
+		
+		//we look at the last 50 moves and see if something ate something 
+		//or if a pawn was moved
+		for (int i = historic.size() - 50; i < historic.size(); i++) {
+			int t1 = historic.get(i).getP1();
+			int t2 = historic.get(i).getP2();
+			if (t1 == 'p') {
+				nb_pawn_moves ++;
+			}
+			if (t2 != 'e') {
+				nb_lunch ++;
+			}
+		}
+		
+		//if none of the above were done 
+		if (nb_lunch == 0 && nb_pawn_moves == 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Gathers in one array all the pieces that are still in game
+	 * @param turn more exactly color of player's leftovers
+	 * @return
+	 */
+	public ArrayList<Piece> getLeftovers(int turn) {
+		ArrayList<Piece> leftovers = new ArrayList<Piece>();
+		for (int i = 0; i < cells.length; i++) {
+			for (int j = 0; j < cells[i].length; j++) {
+				if (cells[i][j].getColor() == turn) {
+					leftovers.add(this.getPieceOnCell(i, j));
+				}
+			}
+		}
+		return leftovers;
+	}
+
+	/**
+	 * Verify draw option according to the rule "no mean to check mate"
+	 * @return true if impossible to check mate
+	 */
+	public boolean impossibleCheckMate() {
+		ArrayList<Piece> boardLeftovers = new ArrayList<Piece>();
+		ArrayList<Piece> whiteLeftovers = getLeftovers(0);
+		ArrayList<Piece> blackLeftovers = getLeftovers(1);
+		boardLeftovers.addAll(whiteLeftovers);
+		boardLeftovers.addAll(blackLeftovers);
+		// We can call a draw
+		// if only the 2 kings are left
+		if (boardLeftovers.size() == 2) {
+			return true;
+		}
+		// if king and horse vs king
+		if (boardLeftovers.size() == 3) {
+			char first = boardLeftovers.get(0).getType();
+			char second = boardLeftovers.get(1).getType();
+			char third = boardLeftovers.get(2).getType();
+			if ((first == 'k' || first == 'h') && (second == 'k' || second == 'h') && (third == 'k' || third == 'h')) {
+				return true;
+			}
+		}
+		// if king and bishop vs king
+		if (boardLeftovers.size() == 3) {
+			char first = boardLeftovers.get(0).getType();
+			char second = boardLeftovers.get(1).getType();
+			char third = boardLeftovers.get(2).getType();
+			if ((first == 'k' || first == 'b') && (second == 'k' || second == 'b') && (third == 'k' || third == 'b')) {
+				return true;
+			}
+		}
+		// if king and bishop vs king and bishop and bishops are same color
+		if (boardLeftovers.size() == 4) {
+			char first = boardLeftovers.get(0).getType();
+			char second = boardLeftovers.get(1).getType();
+			char third = boardLeftovers.get(2).getType();
+			char fourth = boardLeftovers.get(3).getType();
+			int bishop_colors[] = new int[2];
+			int cpt = 0;
+			if ((first == 'k' || first == 'b') && (second == 'k' || second == 'b') && (third == 'k' || third == 'b')
+					&& (fourth == 'k' || fourth == 'b')) {
+				for (int i = 0; i < boardLeftovers.size(); i++) {
+					if (boardLeftovers.get(i).getType() == 'b') {
+						int x = boardLeftovers.get(i).getC().getX() + 1;
+						int y = boardLeftovers.get(i).getC().getY() + 1;
+						int tot = x * y;
+						// if it's even it's
+						if (tot % 2 == 0) {
+							bishop_colors[cpt] = 0;
+						} else {
+							bishop_colors[cpt] = 1;
+						}
+						cpt++;
+					}
+				}
+				//if the bishops move on the same color
+				if (bishop_colors[0] == bishop_colors[1]) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
 }

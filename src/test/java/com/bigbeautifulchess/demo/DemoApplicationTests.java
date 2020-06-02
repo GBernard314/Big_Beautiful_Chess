@@ -474,7 +474,6 @@ class DemoApplicationTests {
 
 		assertEquals(1, tester.getHistoric().size());
 	}
-
 	
 	@Test
 	void bigCastlingTest() {
@@ -518,5 +517,201 @@ class DemoApplicationTests {
 		assertEquals('k', black_tester.getPieceOnCell(0, 6).getType());
 		assertEquals('r', black_tester.getPieceOnCell(0, 5).getType());
 
+	}
+	
+	@Test
+	void impossibleCheckMateTest() {
+		Board tester = new Board(false);
+
+		tester.getCells()[1][4] = new Piece(1, 4, 0, 'k');	
+		tester.getCells()[7][4] = new Piece(7, 4, 1, 'k');
+		assertEquals(true, tester.impossibleCheckMate());
+
+		tester.getCells()[3][4] = new Piece(3, 4, 0, 'h');	
+		assertEquals(true, tester.impossibleCheckMate());
+		
+		tester.getCells()[3][4] = new Piece(3, 4, 0, 'b');	
+		assertEquals(true, tester.impossibleCheckMate());
+		
+
+		tester.getCells()[5][4] = new Piece(5, 4, 1, 'b');	
+		assertEquals(true, tester.impossibleCheckMate());
+		
+
+		tester.getCells()[5][4] = new Piece(5, 4);	
+		tester.getCells()[3][4] = new Piece(3, 4);	
+		
+		tester.getCells()[2][2] = new Piece(2, 2, 0, 'b');	
+		tester.getCells()[4][4] = new Piece(4, 4, 1, 'b');	
+		assertEquals(true, tester.impossibleCheckMate());
+	}
+	
+	@Test
+	void fiftyMovesTest() {
+		Board tester = new Board(false);
+		
+		//emulate the fifty moves
+		tester.getCells()[1][4] = new Piece(1, 4, 0, 'r');
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		//10
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		//20
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		//30
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		//40
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		//50
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		//60
+		
+		assertEquals(true, tester.fiftyMoves());
+		
+		Board tester2 = new Board(false);
+		//emulate the fifty moves
+		tester.getCells()[1][4] = new Piece(1, 4, 0, 'r');
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		//10
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		//20
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		//30
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		//40
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		//50
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.getCells()[1][4] = new Piece(1, 4, 1, 'r');
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		tester.eat(tester.getCells()[1][4], tester.getCells()[1][7]);
+		tester.eat(tester.getCells()[1][7], tester.getCells()[1][4]);
+		
+
+		assertEquals(false, tester.fiftyMoves());
+
+	}
+	
+	@Test
+	void isLegalTest() {
+		Board tester = new Board(false);
+		
+		tester.getCells()[0][7] = new Piece(0, 7, 0, 'k');
+		tester.getCells()[7][0] = new Piece(7, 0, 1, 'k');
+		tester.getCells()[0][0] = new Piece(0, 0, 1, 'r');
+		tester.getCells()[0][6] = new Piece(0, 6, 0, 'p');
+		tester.getCells()[1][6] = new Piece(1, 6);
+	
+		assertEquals(false, tester.isLegal(tester.getCells()[0][6], tester.getCells()[1][6]));
+		
+	}
+
+	@Test
+	void drawTest() {
+		Board tester = new Board(false);		
 	}
 }

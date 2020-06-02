@@ -40,6 +40,8 @@ public class BigbeautifulchessApplication {
 		//we print it to get fancy
 		b.printBoard();
 		
+		
+		
 		//1st turn
 		//white turn
 		b.eat(b.getPieceOnCell(7, 0), new Piece(5, 0));
@@ -65,6 +67,8 @@ public class BigbeautifulchessApplication {
 		b.eat(b.getPieceOnCell(5, 2), new Piece(0, 2));
 		System.out.println("theoretical king moves nb = " + bk.getTheoretical_moves().size());
 		b.printBoard();
+		
+		b.printHistoric();
 		
 		
 		/*
