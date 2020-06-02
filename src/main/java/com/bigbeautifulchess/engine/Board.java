@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
+import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
+
 import com.bigbeautifulchess.tools.*;
 
 public class Board {
@@ -381,7 +383,9 @@ public class Board {
 	 * 
 	 * @param p ArrayList of cells
 	 */
-	public void printMovements(Piece p) {
+	public void printMovements(Piece p) {		
+		System.out.println("┌───┬───┬───┬───┬───┬───┬───┬───┐");
+
 		int found = 0;
 		for (int i = 0; i < cells.length; i++) {
 			for (int j = 0; j < cells[i].length; j++) {
@@ -401,6 +405,8 @@ public class Board {
 			}
 			System.out.print("|\n");
 		}
+		System.out.println("└───┴───┴───┴───┴───┴───┴───┴───┘");
+
 	}
 
 	/**
@@ -1132,12 +1138,9 @@ public class Board {
 				return;
 			}
 		}
-		
-		/*
 		if (!isLegal(hunter, hunted)) {
-			
+			return;
 		}
-		*/
 
 		// in the hunter cell we put nothing
 		this.getCells()[hunter_x][hunter_y] = new Piece(hunter_x, hunter_y);
@@ -1174,8 +1177,25 @@ public class Board {
 		updateMoves();
 	}
 
+	/**
+	 * 
+	 * @param hunter piece
+	 * @param hunted piece
+	 * @return true if you can do this move without being in check after 
+	 */
 	public boolean isLegal(Piece hunter, Piece hunted) {
-		Board simulation = new Board(this.getCells(), this.getTurn(), this.getResult());		
+		Piece cells[][] = new Piece[8][8];
+		for (int i = 0; i < cells.length; i++) {
+			for (int j = 0; j < cells[i].length; j++) {
+				int x = this.getCells()[i][j].getC().getX();
+				int y = this.getCells()[i][j].getC().getY();
+				int color = this.getCells()[i][j].getColor();
+				char type = this.getCells()[i][j].getType();
+				boolean moved = this.getCells()[i][j].getMoved();
+				cells[i][j] = new Piece(x, y, color, type, moved);
+			}
+		}
+		Board simulation = new Board(cells, this.getTurn(), this.getResult());		
 		int hunter_x = hunter.getC().getX();
 		int hunter_y = hunter.getC().getY();
 		int hunted_x = hunted.getC().getX();
@@ -1185,7 +1205,7 @@ public class Board {
 		simulation.getCells()[hunter_x][hunter_y] = new Piece(hunter_x, hunter_y);
 		// in the hunted cell we put the hunter
 		simulation.getCells()[hunted_x][hunted_y] = new Piece(hunted_x, hunted_y, hunter.getColor(), hunter.getType());
-		
+		simulation.updateMoves();
 		if (simulation.isChecked()) {
 			return false;
 		}
@@ -1282,9 +1302,42 @@ public class Board {
 		}
 	}
 
-	private boolean staleMate() {
+	public boolean staleMate() {
 		//the player can only move the king and if he does, he'll be in check
-		return false;
+		//then it's a draw		
+		Piece cells[][] = new Piece[8][8];
+		for (int i = 0; i < cells.length; i++) {
+			for (int j = 0; j < cells[i].length; j++) {
+				int x = this.getCells()[i][j].getC().getX();
+				int y = this.getCells()[i][j].getC().getY();
+				int color = this.getCells()[i][j].getColor();
+				char type = this.getCells()[i][j].getType();
+				boolean moved = this.getCells()[i][j].getMoved();
+				cells[i][j] = new Piece(x, y, color, type, moved);
+			}
+		}	
+
+		ArrayList<Piece> pieces_left = this.getLeftovers(this.getTurn());
+		for (int i = 0; i < pieces_left.size(); i++) {
+			Board simulation = new Board(cells, this.getTurn(), this.getResult());
+			//we check every move of every piece if it's not illegal
+
+			int hunter_x1 = pieces_left.get(i).getC().getX();
+			int hunter_y1 = pieces_left.get(i).getC().getY();
+			Piece hunter = simulation.getPieceOnCell(hunter_x1, hunter_y1);
+			//hunter.printPiece();			
+			for (int j = 0; j < pieces_left.get(i).getMoves().size(); j++) {
+				int x2 = pieces_left.get(i).getMoves().get(j).getX();
+				int y2 = pieces_left.get(i).getMoves().get(j).getY();
+				Piece hunted = simulation.getPieceOnCell(x2, y2);
+				
+				//System.out.println(simulation.isLegal(hunter, hunted));
+				if (simulation.isLegal(hunter, hunted)) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	private boolean threeFoldRepetition() {

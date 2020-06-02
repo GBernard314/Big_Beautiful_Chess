@@ -705,9 +705,39 @@ class DemoApplicationTests {
 		tester.getCells()[0][0] = new Piece(0, 0, 1, 'r');
 		tester.getCells()[0][6] = new Piece(0, 6, 0, 'p');
 		tester.getCells()[1][6] = new Piece(1, 6);
-	
+		tester.updateMoves();
+
 		assertEquals(false, tester.isLegal(tester.getCells()[0][6], tester.getCells()[1][6]));
+
+
+		tester.getCells()[3][6] = new Piece(3, 6, 0, 'r');
+		tester.updateMoves();
+		assertEquals(true, tester.isLegal(tester.getCells()[3][6], tester.getCells()[2][6]));
+
 		
+		}
+	
+	@Test
+	void staleMateTest() {
+		Board tester = new Board(false);
+		tester.setTurn(0);
+		
+		tester.getCells()[0][7] = new Piece(0, 7, 0, 'k');
+		tester.getCells()[7][0] = new Piece(7, 0, 1, 'k');
+		tester.getCells()[0][0] = new Piece(0, 0, 1, 'r');
+		tester.getCells()[1][0] = new Piece(1, 0, 1, 'r');
+		tester.getCells()[0][6] = new Piece(0, 6, 0, 'h');
+		tester.getCells()[1][6] = new Piece(1, 6);
+		tester.updateMoves();
+
+		assertEquals(true, tester.staleMate());
+
+		tester.getCells()[3][3] = new Piece(3, 3, 0, 'b');
+		tester.updateMoves();
+
+		assertEquals(false, tester.staleMate());
+				
+
 	}
 
 	@Test
