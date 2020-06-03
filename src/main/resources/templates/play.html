@@ -10,21 +10,17 @@
 		<div class="row justify-content-md-center d-flex">
 			<div class="col col-md-auto">
 				<div id="header" class="d-flex justify-content-between">
-					<span id="bombSpan" th:text="${'💣 '+ gridGame.getNbMine()}">000</span>
-					<span id="reactionSpan" th:if="${gridGame.lost}">💀</span>
-					<span id="reactionSpan" th:unless="${gridGame.lost}">🙂</span>
-					<span id="timeSpan" th:text="${ gridGame.getElapsedTime()}">00:00</span>
+					<span id="bombSpan" >000</span>
+					<span id="reactionSpan">🙂</span>
+					<span id="timeSpan">00:00</span>
 				</div>
 				
-				<table onload=""  border="1" class="gameGrid" id="game">
+				<table onload="" border="1" class="gameGrid" id="game">
 					<tbody>
-						<tr th:each="case0, row : ${gridGame.getFirstCasePerRow()}">
-							<td class="text-center caseGrille" 
-								th:classappend="${case.getColorClass()}"
-								style="width:30px;height:30px"
-								th:each="case, iterX : ${gridGame.getLine(row.getIndex()*gridGame.getWidth())}" 
-								>
-							<a style="width: 100%; height: 100%; display: block; text-decoration: none" href="#" th:text="${case.toString()}" th:onclick="actionCase( [[${((row.getIndex()*gridGame.getWidth())+iterX.getIndex())}]] )"></a>
+						<tr th:each="row,y : ${board.cells}">
+							<td th:each="piece,x : ${row}" 
+								class="text-center caseGrille"  style="width:50px;height:50px" >
+							<a style="width: 100%; height: 100%; display: block; text-decoration: none" href="#" th:text="${piece.type}" th:onclick="actionCase( [[${y.getIndex()*32 + x.getIndex()}]] )"></a>
 							</td>
 						</tr>
 					  </tbody>
@@ -47,35 +43,40 @@
 			</div>
 		<br>
 		<div class="text-center" >
-			<p th:text="'Nombre de cases : ' + ${gridGame.getNombreCases()}">Nombre de cases : 0 </p>
-			<p th:text="'Nombre de mines : ' + ${gridGame.getNbMine()}">Nombre de cases : 0 </p>
-			<p th:if="${gridGame.lost == false}" th:text="'Cases sûres restantes : ' + ${(gridGame.getNombreCases() -gridGame.getNombreCasesDecouvertes()) - gridGame.getNbMine()} + '/' + ${gridGame.getNombreCases()}">Nombre de cases : 0 </p>
-			<p th:if="${gridGame.lost == false}" th:text="'Probabilité de ne pas tomber sur une mine : ' + ${gridGame.retourneChance()} +'%'">Chance de victoires : 0 </p>
+			<!-- Infos -->
+			<!--
+			<p th:text="'Nombre de cases : ' + ${board.getNombreCases()}">Nombre de cases : 0 </p>
+			<p th:text="'Nombre de mines : ' + ${board.getNbMine()}">Nombre de cases : 0 </p>
+			<p th:if="${board.lost == false}" th:text="'Cases sûres restantes : ' + ${(board.getNombreCases() -board.getNombreCasesDecouvertes()) - board.getNbMine()} + '/' + ${board.getNombreCases()}">Nombre de cases : 0 </p>
+			<p th:if="${board.lost == false}" th:text="'Probabilité de ne pas tomber sur une mine : ' + ${board.retourneChance()} +'%'">Chance de victoires : 0 </p>
+			-->
 			<a class="btn btn-primary" href="#" th:href="|/reset|">Reinitialiser</a>
-			<a th:if="${gridGame.lost}" th:href="@{|/gamemode/list|}" class="btn btn-secondary">Modes de jeux</a>
-			<a th:if="${gridGame.lost}" th:href="@{|/|}" class="btn btn-info">Accueil</a>
-			<a th:unless="${gridGame.lost}" th:href="@{|/saveGame|}" class="btn btn-info">Sauver ma progression</a>
+			<a th:if="${board.result < 0}" th:href="@{|/gamemode/list|}" class="btn btn-secondary">Modes de jeux</a>
+			<a th:if="${board.result < 0}" th:href="@{|/|}" class="btn btn-info">Accueil</a>
+			<a th:unless="${board.result < 0}" th:href="@{|/saveGame|}" class="btn btn-info">Sauver ma progression</a>
 		</div>
 			
-		<div id="overlay" th:if="${gridGame.lost || gridGame.retourneChance()==0 }" class="overlay mx-auto text-center" >
-	        <h1 id="overlayTitle" th:text=" ${gridGame.lost ? 'PERDU' : 'GAGNÉ !'}" class="mx-auto my-4 text-uppercase text-white">WIN !</h1>
-	        <a   th:text=" ${gridGame.lost ? 'Try Again' : 'play Again !'}" th:href="@{|/reset|}" href="#continue" class="btn btn-big btn-primary">Réessayer</a>
+		<div id="overlay" th:if="${board.result >= 0}" class="overlay mx-auto text-center" >
+	        <h1 id="overlayTitle" th:text=" ${board.result>=2 ? 'PERDU' : 'GAGNÉ !'}" class="mx-auto my-4 text-uppercase text-white">WIN !</h1>
+	        <a  th:href="@{|/reset|}" href="#continue" class="btn btn-big btn-primary">Réessayer</a>
 	        <a th:href="@{|/gamemode/list|}" href="#about" class="btn btn-big btn-warning">Autres modes de jeu</a>
 	        <button onclick="undisplayOverlay()" class="btn btn-link text-white mx-3">Fermer <b class="px-2" style="color:white;background: #cc0000;"> X </b></button>
 	        
+	        <!--  Win/loose overlay + save score form -->
+	        <!-- 
 	     	<div class="mx-auto my-2 text-center">
-	        <img th:if="${gridGame.lost}" th:src="@{../img/kim.gif}" src="../static/img/kim.gif" alt="kimgif" width="500" height="500">
-	      	<img th:if="${!gridGame.lost}" th:src="@{/img/winwin.gif}" src="../static/img/winwin.gif" alt="you win" height="370">
-	      	
-	      	<form th:if="${!gridGame.lost}" action="#" th:action="@{/saveScore}" method="post" class="mx-auto my-3" style="width: 400px">
+	        <img th:if="${board.lost}" th:src="@{../img/kim.gif}" src="../static/img/kim.gif" alt="kimgif" width="500" height="500">
+	      	<img th:if="${!board.lost}" th:src="@{/img/winwin.gif}" src="../static/img/winwin.gif" alt="you win" height="370">
+	      	<form th:if="${!board.lost}" action="#" th:action="@{/saveScore}" method="post" class="mx-auto my-3" style="width: 400px">
 				<div class="form-group">
 					<label for="pseudo" class="font-weight-bold text-white">Entres un pseudo pour sauver ton score :</label>
 					<input type="text" class="form-control" id="pseudo" name="owner" placeholder="xXDémineurXx..">
 				</div>
 				<button type="submit" class="btn btn-primary">Enregistrer</button>
 			</form>
-			
 	      </div>
+	       -->
+	      
 	     </div>
 	     
 	     <script>
@@ -113,7 +114,7 @@
 	     </script>
 	</div>
 	
-		<script th:fragment="customScript" th:if="${ !gridGame.lost && gridGame.retourneChance() != 0}">
+		<script th:fragment="customScript" th:if="${ board.result <0 }">
 			//JS : changer la tete de l'emoji au clic souris
 	     	window.addEventListener("mousedown",function(event){
 	     		var emoji = document.getElementById("reactionSpan");

@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.bigbeautifulchess.engine.Board;
 import com.bigbeautifulchess.game.GridGame;
 
 @Controller
 
 public class PlayController {
-	private GridGame g;
+	private Board b;
 	Long cur_mode;
-	private int width, height, nbmines;
 	
 	@GetMapping("/lost")
 	public String lose(Model model) {
@@ -27,23 +27,20 @@ public class PlayController {
 	
 	@GetMapping("/play")
 	public String play(Model model) {
-		if(g == null) {
+		if(b == null) {
 			return "redirect:/reset";
 		}
 		
-		model.addAttribute("gridGame", g);
-		//model.addAttribute("score", new ScoreForm());
+		model.addAttribute("board", b);
 		return "play";
 	}
 	
 	@GetMapping("/reset")
 	public String reset(Model model) {
-		g = new GridGame(8,8,30);
+		b = new Board();
 		
 		/* Uncomment to see game in console : */ 
-			g.print(); 
-		/* Uncomment to undercover the game in web : */ 
-			g.revealCases();
+		b.printBoardSimple();
 		
 		return "redirect:/play";
 	}
@@ -101,24 +98,6 @@ public class PlayController {
 			}
 			if(g.getCase(id).getType() == Type.BOMB) {
 				g.lose();
-			}
-		}
-		model.addAttribute("gridGame", g);
-		model.addAttribute("score", new ScoreForm());
-		*/
-		return "play";
-	}
-	
-	@GetMapping("/play/flag:{id}")
-	public String flagCase(@PathVariable int id, Model model) {
-		//No game started case : start a new one
-		/*
-		if(g == null) {
-			return "redirect:/reset";
-		}
-		if(g.lost == false) {
-			if(g.getCase(id).isVisible() == false) {
-				g.flagCase(id);
 			}
 		}
 		model.addAttribute("gridGame", g);

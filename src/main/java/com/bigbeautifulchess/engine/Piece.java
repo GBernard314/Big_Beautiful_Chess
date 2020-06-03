@@ -481,4 +481,12 @@ public class Piece {
 			return new ArrayList<Coord>();
 		}
 	}
+	
+	public String toString() {
+		String piece ="";
+		switch(type) {
+			case
+		}
+		return "";
+	}
 }
