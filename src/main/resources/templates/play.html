@@ -1,0 +1,137 @@
+<!doctype html>
+<html
+	th:replace="~{layout :: layout(~{::title}, ~{::content}, ~{::customScript})}"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:fragment="title">Play</title>
+</head>
+<body>
+	<div th:fragment="content" class="container-fluid">
+		<div class="row justify-content-md-center d-flex">
+			<div class="col col-md-auto">
+				<div id="header" class="d-flex justify-content-between">
+					<span id="bombSpan" th:text="${'💣 '+ gridGame.getNbMine()}">000</span>
+					<span id="reactionSpan" th:if="${gridGame.lost}">💀</span>
+					<span id="reactionSpan" th:unless="${gridGame.lost}">🙂</span>
+					<span id="timeSpan" th:text="${ gridGame.getElapsedTime()}">00:00</span>
+				</div>
+				
+				<table onload=""  border="1" class="gameGrid" id="game">
+					<tbody>
+						<tr th:each="case0, row : ${gridGame.getFirstCasePerRow()}">
+							<td class="text-center caseGrille" 
+								th:classappend="${case.getColorClass()}"
+								style="width:30px;height:30px"
+								th:each="case, iterX : ${gridGame.getLine(row.getIndex()*gridGame.getWidth())}" 
+								>
+							<a style="width: 100%; height: 100%; display: block; text-decoration: none" href="#" th:text="${case.toString()}" th:onclick="actionCase( [[${((row.getIndex()*gridGame.getWidth())+iterX.getIndex())}]] )"></a>
+							</td>
+						</tr>
+					  </tbody>
+				</table>
+			</div>
+		</div>
+			<div id="btnOptions" style="width: 200px">
+			<p><b>Action au clic</b></p><hr>
+				<!--Discover option option -->
+				<div class="custom-control custom-radio">
+				  <input type="radio" class="custom-control-input" id="radioDiscover" name="groupOfRadios" checked>
+				  <label class="custom-control-label" for="radioDiscover"><span id="cursor1">⛏️</span> Découverte</label>
+				</div>
+				
+				<!--Flag option -->
+				<div class="custom-control custom-radio">
+				  <input type="radio" class="custom-control-input" id="radioFlag" name="groupOfRadios">
+				  <label class="custom-control-label" for="radioFlag"> <span id="cursor2">🚩</span> Drapeau</label>
+				</div>
+			</div>
+		<br>
+		<div class="text-center" >
+			<p th:text="'Nombre de cases : ' + ${gridGame.getNombreCases()}">Nombre de cases : 0 </p>
+			<p th:text="'Nombre de mines : ' + ${gridGame.getNbMine()}">Nombre de cases : 0 </p>
+			<p th:if="${gridGame.lost == false}" th:text="'Cases sûres restantes : ' + ${(gridGame.getNombreCases() -gridGame.getNombreCasesDecouvertes()) - gridGame.getNbMine()} + '/' + ${gridGame.getNombreCases()}">Nombre de cases : 0 </p>
+			<p th:if="${gridGame.lost == false}" th:text="'Probabilité de ne pas tomber sur une mine : ' + ${gridGame.retourneChance()} +'%'">Chance de victoires : 0 </p>
+			<a class="btn btn-primary" href="#" th:href="|/reset|">Reinitialiser</a>
+			<a th:if="${gridGame.lost}" th:href="@{|/gamemode/list|}" class="btn btn-secondary">Modes de jeux</a>
+			<a th:if="${gridGame.lost}" th:href="@{|/|}" class="btn btn-info">Accueil</a>
+			<a th:unless="${gridGame.lost}" th:href="@{|/saveGame|}" class="btn btn-info">Sauver ma progression</a>
+		</div>
+			
+		<div id="overlay" th:if="${gridGame.lost || gridGame.retourneChance()==0 }" class="overlay mx-auto text-center" >
+	        <h1 id="overlayTitle" th:text=" ${gridGame.lost ? 'PERDU' : 'GAGNÉ !'}" class="mx-auto my-4 text-uppercase text-white">WIN !</h1>
+	        <a   th:text=" ${gridGame.lost ? 'Try Again' : 'play Again !'}" th:href="@{|/reset|}" href="#continue" class="btn btn-big btn-primary">Réessayer</a>
+	        <a th:href="@{|/gamemode/list|}" href="#about" class="btn btn-big btn-warning">Autres modes de jeu</a>
+	        <button onclick="undisplayOverlay()" class="btn btn-link text-white mx-3">Fermer <b class="px-2" style="color:white;background: #cc0000;"> X </b></button>
+	        
+	     	<div class="mx-auto my-2 text-center">
+	        <img th:if="${gridGame.lost}" th:src="@{../img/kim.gif}" src="../static/img/kim.gif" alt="kimgif" width="500" height="500">
+	      	<img th:if="${!gridGame.lost}" th:src="@{/img/winwin.gif}" src="../static/img/winwin.gif" alt="you win" height="370">
+	      	
+	      	<form th:if="${!gridGame.lost}" action="#" th:action="@{/saveScore}" method="post" class="mx-auto my-3" style="width: 400px">
+				<div class="form-group">
+					<label for="pseudo" class="font-weight-bold text-white">Entres un pseudo pour sauver ton score :</label>
+					<input type="text" class="form-control" id="pseudo" name="owner" placeholder="xXDémineurXx..">
+				</div>
+				<button type="submit" class="btn btn-primary">Enregistrer</button>
+			</form>
+			
+	      </div>
+	     </div>
+	     
+	     <script>
+	     	var timeElapsed;
+	     	var incrementTime;
+	     
+	     	window.onload = (function(){
+	     		//Recuperation du temps pour increment coté client
+	     		var counter = document.getElementById("timeSpan");
+	     		timeElapsed = parseInt(counter.innerHTML,10);
+	     		console.log("time init : "+timeElapsed);
+	     		
+	     		if(typeof incrementTime === "function"){
+	     			incrementTime();
+	     		}
+	     		
+	     	});
+	     	
+	     	//JS : pour cacher l'écran de défaite
+	     	function undisplayOverlay(){
+	     		var overlay = document.getElementById("overlay");
+	     		overlay.style.display = "none";
+	     		
+	     	}
+	     	
+	     	function actionCase(id){
+	     		 var link="/play/";
+	     		 if(document.getElementById("radioFlag").checked){
+	     			 link += "flag:"
+	     		 }
+	     		 link+= id.toString();
+	     		 document.location.href = link; 
+	     	}
+	     	
+	     </script>
+	</div>
+	
+		<script th:fragment="customScript" th:if="${ !gridGame.lost && gridGame.retourneChance() != 0}">
+			//JS : changer la tete de l'emoji au clic souris
+	     	window.addEventListener("mousedown",function(event){
+	     		var emoji = document.getElementById("reactionSpan");
+	     		reactionSpan.innerHTML = "😮";
+	     	});
+	     	//JS : changer la tete de l'emoji au relachement souris
+	     	window.addEventListener("mouseup",function(event){
+	     		var emoji = document.getElementById("reactionSpan");
+	     		reactionSpan.innerHTML = "🙂";
+	     	});
+	     
+	     	incrementTime = function(){
+	     		var counter = document.getElementById("timeSpan");
+	     		timeElapsed = timeElapsed + 1;
+	     		
+	     		counter.innerHTML = timeElapsed;
+	     		setTimeout(incrementTime, 1000);
+	     	};
+			</script>
+	</body>
+</html>
