@@ -88,7 +88,7 @@ public class Piece {
 		super();
 		this.coord = new Coord(x, y);
 		this.color = -1;
-		this.type = 'e';
+		this.type = 0;
 		this.moves = new ArrayList<Coord>();
 		this.theoretical_moves = new ArrayList<Coord>();
 		this.moved = false;

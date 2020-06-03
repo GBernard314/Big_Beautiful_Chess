@@ -21,8 +21,8 @@
 							<td th:each="piece,x : ${row}" 
 								class="text-center caseGrille"
 								th:style="${ (y%2 + x.getIndex())%2 ==0 ? 'background:white': 'background:lightgrey'}">
-							<a style="width: 100%; height: 100%; display: block; text-decoration: none" href="#" th:onclick="actionCase([[${7-y}]],[[${x.getIndex()}]])">
-								<img class="p-1 py-2" th:unless="${piece.type == 'e'}" th:alt="${piece.type}" th:src='${"assets/chess_icons/"+ (piece.color==1? "white" : "black") +"/"+piece.type+".svg"}'>
+							<a th:if="${piece.type}" th:class="${piece.color==1? 'clickablePawn' : 'adversePawn'}" style="width: 100%; height: 100%; display: block; text-decoration: none" href="#" th:onclick="actionCase([[${7-y}]],[[${x.getIndex()}]])">
+								<img class="p-1 py-2" th:alt="${piece.type}" th:src='${"assets/chess_icons/"+ (piece.color==1? "white" : "black") +"/"+piece.type+".svg"}'>
 							</a>
 							</td>
 						</tr>
@@ -105,12 +105,11 @@
 	     		
 	     	}
 	     	
-	     	function actionCase(id){
-	     		 var link="/play/";
-	     		 if(document.getElementById("radioFlag").checked){
-	     			 link += "flag:"
-	     		 }
-	     		 link+= id.toString();
+	     	function actionCase(x,y){
+	     		 var link="/play/move-";
+	     		 link+= x.toString(),
+	     		 link += ",";
+	     		link+= y.toString();
 	     		 document.location.href = link; 
 	     	}
 	     	
