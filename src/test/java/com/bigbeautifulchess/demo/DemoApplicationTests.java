@@ -123,6 +123,22 @@ class DemoApplicationTests {
 	 */
 
 	@Test
+	void BoardTest() {
+		String plateau = "0,0,0/|/|/|/|/|/|7,7,1/6,6,1";
+		String historic = "k:2,4-e:4,5";
+		
+		Board tester = new Board(plateau, 0, -1, 0, 0, null, historic);
+		tester.updateMoves();
+		
+		assertEquals('p', tester.getPieceOnCell(0, 0).getType());
+		assertEquals('k', tester.getPieceOnCell(7, 7).getType());
+		assertEquals(0, tester.getPieceOnCell(7, 7).getColor());
+		
+		assertEquals('k', tester.getHistoric().get(0).getP1());
+		assertEquals('e', tester.getHistoric().get(0).getP2());
+	}
+	
+	@Test
 	void getKingTest() {
 		Board tester = new Board();
 		Piece king_white = tester.getKing();
@@ -446,6 +462,12 @@ class DemoApplicationTests {
 		
 		assertEquals(2, tester.getPieceOnCell(5, 5).getMoves().size());
 		assertEquals(2, tester.getPieceOnCell(4, 0).getMoves().size());
+		
+		Board tester2 = new Board(false);
+		tester2.getCells()[0][6] = new Piece(0, 6, 1, 'p', false);
+		
+		tester2.updateMoves();
+		
 	}
 
 	@Test
@@ -740,8 +762,4 @@ class DemoApplicationTests {
 
 	}
 
-	@Test
-	void drawTest() {
-		Board tester = new Board(false);		
-	}
 }

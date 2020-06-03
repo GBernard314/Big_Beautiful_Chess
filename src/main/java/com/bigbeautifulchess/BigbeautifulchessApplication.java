@@ -11,12 +11,12 @@ public class BigbeautifulchessApplication {
 	public static void main(String[] args) {
 
 		System.out.println("Main 2 started\n");
-
-		int x=2;
-		int y=2;
 		
 		//ArrayList of coordinates to remove
 		ArrayList<Coord> removed = new ArrayList<Coord>();
+		
+		String plateau = "0,0,0/|/|/|/|/|/|7,7,1/6,6,1|";
+		String historic = "k:2,4-e:4,5";
 		
 		//Piece to get removed
 		
@@ -29,11 +29,10 @@ public class BigbeautifulchessApplication {
 		
 		
 		Board b = new Board();
-		Piece bk = b.getPieceOnCell(0, 4);
-		System.out.println("theoretical king moves nb = " + bk.getTheoretical_moves().size());
 
 		b.updateMoves();
 		
+		//we remove the previously listed elements
 		for (int i = 0; i < removed.size(); i++) {
 			b.getCells()[removed.get(i).getX()][removed.get(i).getY()] = new Piece(removed.get(i).getX(), removed.get(i).getY());
 		}
@@ -45,32 +44,29 @@ public class BigbeautifulchessApplication {
 		//1st turn
 		//white turn
 		b.eat(b.getPieceOnCell(7, 0), new Piece(5, 0));
-		System.out.println("theoretical king moves nb = " + bk.getTheoretical_moves().size());
 		b.printBoard();
 		
 		//black turn
 		b.eat(b.getPieceOnCell(0, 1), new Piece(2, 0));
-		System.out.println("theoretical king moves nb = " + bk.getTheoretical_moves().size());
 		b.printBoard();
 		
 		//white turn
 		b.eat(b.getPieceOnCell(5, 0), new Piece(5, 2));
-		System.out.println("theoretical king moves nb = " + bk.getTheoretical_moves().size());
 		b.printBoard();
 		
 		//black turn
 		b.eat(b.getPieceOnCell(2, 0), new Piece(0, 1));
-		System.out.println("theoretical king moves nb = " + bk.getTheoretical_moves().size());
 		b.printBoard();
 		
 		//white turn
 		b.eat(b.getPieceOnCell(5, 2), new Piece(0, 2));
-		System.out.println("theoretical king moves nb = " + bk.getTheoretical_moves().size());
 		b.printBoard();
 		
 		b.printHistoric();
 		
 		
+		Board bdd = new Board(plateau, 0, -1, 0, 0, null, historic);
+		bdd.printBoardSimple();
 		/*
 		//To test one-by-one piece from the board
 		Piece p = b.getCells()[x][y];
