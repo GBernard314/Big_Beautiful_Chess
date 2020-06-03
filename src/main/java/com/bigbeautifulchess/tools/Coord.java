@@ -13,7 +13,7 @@ public class Coord {
 	private int y;
 
 	/**
-	 * Initialise a coord with both x and y
+	 * Initialise a coord with both x and y 
 	 * @param x coordinate
 	 * @param y coordinate
 	 */
