@@ -19,7 +19,7 @@
                                 <img th:src="@{assets/images/users/2.jpg}" src="../static/assets/images/users/2.jpg" alt="users" class="rounded-circle img-fluid" />
                             </div>
                             <div class="user-content hide-menu m-t-10">
-                                <h5 class="m-b-10 user-name font-medium">Utilisateur Lambda</h5>
+                                <h5 class="m-b-10 user-name font-medium" sec:authentication="name">Utilisateur Lambda</h5>
                                 <a href="javascript:void(0)" class="btn btn-circle btn-sm m-r-5" id="Userdd" role="button" data-toggle="dropdown" aria-haspopup="true"
                                     aria-expanded="false">
                                     <i class="ti-settings"></i>
@@ -38,7 +38,7 @@
                                     <a class="dropdown-item" href="javascript:void(0)">
                                         <i class="ti-settings m-r-5 m-l-5"></i> Account Setting</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="javascript:void(0)">
+                                    <a class="dropdown-item" th:href="@{/logout}" href="javascript:void(0)">
                                         <i class="fa fa-power-off m-r-5 m-l-5"></i> Logout</a>
                                 </div>
                             </div>
