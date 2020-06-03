@@ -4,26 +4,25 @@
     </head>
     <body>
         <div th:fragment="content">
-            <form name="f" th:action="@{/login}" method="post">
+            <form name="f" th:action="@{/register}" th:object="${register}" method="post">
                 <fieldset>
-                    <legend>Authentification</legend>
+                    <legend>Inscription</legend>
                     <div th:if="${param.error}" class="alert alert-error">
                         L'identifiant et le mot de passe sont invalides
                     </div>
-                    <div th:if="${param.logout}" class="alert alert-success">
-                        Vous avez été déconnecté
-                    </div>
-                    
+                  
                     <label for="username">Identifiant</label>
-                    <input type="text" id="username" name="username" autocomplete="off"/>
+                    <input type="text" id="username" name="username" th:field="*{username}" autocomplete="off"/>
+                    <label for="email">Email</label>
+                    <input type="text" id="email" name="email" th:field="*{email}"autocomplete="off"/>
                     <label for="password">Mot de passe</label>
-                    <input type="password" id="password" name="password" autocomplete="off"/>
+                    <input type="password" id="password" name="password" th:field="*{password}" autocomplete="off"/>
                     <div class="form-actions">
-                        <button type="submit" class="btn">Connexion</button>
+                        <button type="submit" class="btn">Inscription</button>
                     </div>
                 </fieldset>
             </form>
-            <a th:href="@{/register}" href="#">Pas encore inscrit?</a></li>
+            <a th:href="@{/login}" href="#">Vous possédez déjà un comptes?</a></li>
         </div>
     </body>
 </html>

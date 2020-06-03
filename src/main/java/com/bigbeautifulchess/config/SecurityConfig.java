@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,6 +24,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private DbUserDetailsService userDetailsService;
 	
 	@Override
+	public void configure(WebSecurity webSecurity) throws Exception {
+		webSecurity
+			.ignoring()
+				.antMatchers("/register");
+	}
+	
+	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
 			.anyRequest().authenticated()
@@ -36,6 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
 				.invalidateHttpSession(true)
 				.permitAll();
+		
 	}
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) {
@@ -46,7 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public DaoAuthenticationProvider authenticationProvider() {
 	    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 	    authProvider.setUserDetailsService(userDetailsService);
-	    authProvider.setPasswordEncoder(encoder());
+	    authProvider.setPasswordEncoder(encoder());	
 
 	    return authProvider;
 	}

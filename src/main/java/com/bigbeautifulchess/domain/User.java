@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
@@ -19,7 +20,7 @@ public class User implements UserDetails {
 	private static final long serialVersionUID = -2963008589618789228L;
 	
 	@Id @Column
-	@GeneratedValue(generator = "seqUser")
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@SequenceGenerator(name = "seqUser", sequenceName = "seq_user")
 	private Long id;
 
@@ -28,6 +29,9 @@ public class User implements UserDetails {
 	
 	@Column(length = 100)
 	private String password;
+	
+	@Column(length = 100)
+	private String email;
 
 	@ManyToMany(fetch=FetchType.EAGER)
 	private Collection<Authority> authorities;
@@ -74,6 +78,14 @@ public class User implements UserDetails {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
+	public String getEmail() {
+		return email;
 	}
 
 	public Collection<Authority> getAuthorities() {
