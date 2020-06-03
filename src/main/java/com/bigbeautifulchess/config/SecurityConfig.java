@@ -14,50 +14,12 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.thymeleaf.extras.springsecurity5.dialect.SpringSecurityDialect;
 
 import com.bigbeautifulchess.service.DbUserDetailsService;
-
 @Configuration
-@EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Autowired
-	private DbUserDetailsService userDetailsService;
-	
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests()
-			.anyRequest().authenticated()
-				.and()
-			.formLogin()
-				.loginPage("/")
-				.permitAll()
-				.and()
-			.logout()
-				.logoutUrl("/logout")
-				.logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
-				.invalidateHttpSession(true)
-				.permitAll();
-	}
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) {
-	    auth.authenticationProvider(authenticationProvider());
-	}
+    @Override
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.authorizeRequests().antMatchers("/").permitAll();
+}
 
-	@Bean
-	public DaoAuthenticationProvider authenticationProvider() {
-	    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-	    authProvider.setUserDetailsService(userDetailsService);
-	    authProvider.setPasswordEncoder(encoder());
-
-	    return authProvider;
-	}
-
-	@Bean
-	public PasswordEncoder encoder() {
-	    return new BCryptPasswordEncoder(10);
-	}
-	
-	@Bean
-	public SpringSecurityDialect springSecurityDialect() {
-	    return new SpringSecurityDialect();
-	}
 }
