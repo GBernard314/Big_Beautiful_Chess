@@ -482,11 +482,4 @@ public class Piece {
 		}
 	}
 	
-	public String toString() {
-		String piece ="";
-		switch(type) {
-			case
-		}
-		return "";
-	}
 }
