@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.bigbeautifulchess.demo"},{"l":"com.bigbeautifulchess.engine"},{"l":"com.bigbeautifulchess.tools"}]
