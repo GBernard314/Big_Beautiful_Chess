@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout (title, content)">
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout (title, content, customScript)">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -40,7 +40,7 @@
 
                 <!-- footer -->
 				<footer class="footer text-center">
-				    Concept Proof - Big Beautiful Chess 2020 <a href="https://github.com">Check us on Github</a>.
+				    Big Beautiful Chess 2020 <a href="https://github.com">Check us on Github</a>.
 				</footer>
                 <!-- End footer -->
             </div>
@@ -88,6 +88,7 @@
 -->
         <!--dashboard -->
         <script th:src="@{/js/pages/dashboards/dashboard1.js}" src="../static/js/pages/dashboards/dashboard1.js"></script>
+        <script th:replace="${customScript}"></script>
     </body>
 
 </html>

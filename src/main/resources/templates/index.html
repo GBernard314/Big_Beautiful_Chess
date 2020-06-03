@@ -1,11 +1,277 @@
 <!doctype html>
-<html th:replace="~{layout :: layout(~{::title}, ~{::content})}" xmlns:th="http://www.thymeleaf.org">
+<html th:replace="~{layout :: layout(~{::title}, ~{::content}, ~{::customScript})}" xmlns:th="http://www.thymeleaf.org">
 	<head>
-		<title th:fragment="title">Homepage</title>
+		<title th:fragment="title">Index</title>
 	</head>
 	<body>
-		<div th:fragment="content">
-			<p th:text="${message}" >Lorem</p>
+		<div th:fragment="content" class="container-fluid">
+               <!-- Container AMIS / PARTIES-->
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card" style="height: calc(100% - 20px)">
+                            <div class="card-body">
+                                <h4 class="card-title">Amis connectés</h4>
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead class="bg-primary text-white">
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Pseudo</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                   <img src="../assets/images/users/8.jpg" class="rounded-circle" style="width: auto; height: 2.5em;">
+                                                </td>
+                                                <td>Joe Danger</td>
+                                                <td>
+                                                    <div class="btn-group float-right" role="group" aria-label="Button group with nested dropdown">
+                                                        <a href="#" class="btn btn-primary">Jouer</a>
+                                                        <div class="btn-group" role="group">
+                                                            <a id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            </a>
+                                                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                                                <a class="dropdown-item" href="javascript:void(0)">Voir le profil</a>
+                                                                <a class="dropdown-item" href="javascript:void(0)">Supprimer</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <img src="../assets/images/users/5.jpg" class="rounded-circle" style="width: auto; height: 2.5em;">
+                                                 </td>
+                                                <td>Killer Queen</td>
+                                                <td>
+                                                    <div class="btn-group float-right" role="group" aria-label="Button group with nested dropdown">
+                                                        <a href="#"  class="btn btn-primary">Jouer</a>
+                                                        <div class="btn-group" role="group">
+                                                            <a id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            </a>
+                                                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                                                <a class="dropdown-item" href="javascript:void(0)">Voir le profil</a>
+                                                                <a class="dropdown-item" href="javascript:void(0)">Supprimer</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <img src="../assets/images/users/2.jpg" class="rounded-circle" style="width: auto; height: 2.5em;">
+                                                 </td>
+                                                <td>ChessBoi</td>
+                                                <td>
+                                                    <div class="btn-group float-right" role="group" aria-label="Button group with nested dropdown">
+                                                        <a href="#"  class="btn btn-primary">Jouer</a>
+                                                        <div class="btn-group" role="group">
+                                                            <a id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            </a>
+                                                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                                                <a class="dropdown-item" href="javascript:void(0)">Voir le profil</a>
+                                                                <a class="dropdown-item" href="javascript:void(0)">Supprimer</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card" style="height: calc(100% - 20px)">
+                            <div class="card-body">
+                                <h4 class="card-title">Mes parties</h4>
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead class="bg-success text-white">
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Adversaire</th>
+                                                <th>Durï¿½e</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>Max</td>
+                                                <td>26:12</td>
+                                                <td>
+                                                    <div class="btn-group float-right" role="group" aria-label="Button group with nested dropdown">
+                                                        <a href="#" class="btn btn-success"><i class="mdi mdi-eye"></i></a>
+                                                        <a href="#" class="btn btn-info"><i class="fas fa-chess"></i></a>
+                                                        <a href="#" class="btn btn-light"><i class="mdi mdi-eraser"></i></a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>2</td>
+                                                <td>Chess man</td>
+                                                <td>02:13</td>
+                                                <td>
+                                                    <div class="btn-group float-right" role="group" aria-label="Button group with nested dropdown">
+                                                        <a href="#" class="btn btn-success"><i class="mdi mdi-eye"></i></a>
+                                                        <a href="#" class="btn btn-info"><i class="fas fa-chess"></i></a>
+                                                        <a href="#" class="btn btn-light"><i class="mdi mdi-eraser"></i></a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>-</td>
+                                                <td>-</td>
+                                                <td>-</td>
+                                                <td>
+                                                    <div class="btn-group float-right" role="group" aria-label="Button group with nested dropdown">
+                                                        <a href="#" class="btn btn-success"><i class="mdi mdi-eye"></i></a>
+                                                        <a href="#" class="btn btn-info"><i class="fas fa-chess"></i></a>
+                                                        <a href="#" class="btn btn-light"><i class="mdi mdi-eraser"></i></a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <a href="#" class="btn btn-secondary">Historique</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- row -->
+
+                 <!-- Boutons Jeu/amis/skins -->
+                 <div class="card-group">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class = "d-flex align-items-center">
+                                <div class="button-group">
+                                    <button type="button" class="btn waves-effect waves-light btn-warning"><i class="m-r-10 mdi mdi-account-plus"></i> Ajouter un ami</button>
+                                    <button type="button" class="btn waves-effect waves-light btn-success"><i class="m-r-10 mdi mdi-human-greeting"></i> Ma liste d'amis</button>
+                                </div>
+                                <span class="ml-auto">
+                                    <p class = "h3 m-b-0 font-light">23</p>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class = "d-flex align-items-center">
+                                <div class="button-group">
+                                    <button type="button" class="btn waves-effect waves-light btn-warning"><i class="m-r-10 mdi mdi-cart"></i> Boutique</button>
+                                    <button type="button" class="btn waves-effect waves-light btn-secondary"><i class="m-r-10 fas fa-chess"></i> Mes skins</button>
+                                </div>
+                                <span class="ml-auto">
+                                    <p class = "h3 m-b-0 font-light">23</p>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class = "d-flex align-items-center">
+                                <div class="button-group">
+                                    <button type="button" class="btn waves-effect waves-light btn-primary"><i class="m-r-10 fas fa-chess-pawn"></i> Nouvelle partie</button>
+                                    <button type="button" class="btn waves-effect waves-light btn-success"><i class="m-r-10 fas fa-chess-bishop"></i> Rejoindre une partie </button>
+                                </div>
+                                <span class="ml-auto">
+                                    <p class = "h3 m-b-0 font-light">23</p>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fin boutons -->
+
+                <!-- Start Donut Chart -->
+                    <h4 class="card-title">Mes stats</h4>
+                    <div class="card-group">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class = "d-flex align-items-center">
+                                    <div id="donut-chart" style="max-width: 300px; display: inline-block; text-align: center; margin: auto"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class = "d-flex align-items-center" style="padding : 3em">
+                                    <ul>
+                                        <li><h3>Victoires : 16</h3></li>
+                                        <li><p class="h4">Rapport victoires / dï¿½faites : 43 %</p></li>
+                                        <li><p class="h4">Moyenne du nombre de tours : 18</p></li>
+                                        <li><p class="h4">Temps de victoire moyen : 16:32s</p></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class = "d-flex align-items-center">
+                                    <div id="progAxis-chart" style="max-width: 100%; display: inline-block; text-align: center; margin: auto"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 		</div>
+		
+		<script th:fragment= "customScript">
+	        var chart = c3.generate({
+	            bindto: '#donut-chart',
+	            data: {
+	                columns: [
+	                    ['data1', 30],
+	                    ['data2', 120],
+	                ],
+	                type : 'donut',
+	                onclick: function (d, i) { console.log("onclick", d, i); },
+	                onmouseover: function (d, i) { console.log("onmouseover", d, i); },
+	                onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+	            },
+	            donut: {
+	                title: "Iris Petal Width"
+	            }
+	        });
+	
+	        setTimeout(function () {
+	            chart.load({
+	                columns: [
+	                    ["setosa", 0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.3, 0.2, 0.2, 0.1, 0.2, 0.2, 0.1, 0.1, 0.2, 0.4, 0.4, 0.3, 0.3, 0.3, 0.2, 0.4, 0.2, 0.5, 0.2, 0.2, 0.4, 0.2, 0.2, 0.2, 0.2, 0.4, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0.2, 0.2, 0.3, 0.3, 0.2, 0.6, 0.4, 0.3, 0.2, 0.2, 0.2, 0.2],
+	                    ["versicolor", 1.4, 1.5, 1.5, 1.3, 1.5, 1.3, 1.6, 1.0, 1.3, 1.4, 1.0, 1.5, 1.0, 1.4, 1.3, 1.4, 1.5, 1.0, 1.5, 1.1, 1.8, 1.3, 1.5, 1.2, 1.3, 1.4, 1.4, 1.7, 1.5, 1.0, 1.1, 1.0, 1.2, 1.6, 1.5, 1.6, 1.5, 1.3, 1.3, 1.3, 1.2, 1.4, 1.2, 1.0, 1.3, 1.2, 1.3, 1.3, 1.1, 1.3],
+	                    ["virginica", 2.5, 1.9, 2.1, 1.8, 2.2, 2.1, 1.7, 1.8, 1.8, 2.5, 2.0, 1.9, 2.1, 2.0, 2.4, 2.3, 1.8, 2.2, 2.3, 1.5, 2.3, 2.0, 2.0, 1.8, 2.1, 1.8, 1.8, 1.8, 2.1, 1.6, 1.9, 2.0, 2.2, 1.5, 1.4, 2.3, 2.4, 1.8, 1.8, 2.1, 2.4, 2.3, 1.9, 2.3, 2.5, 2.3, 1.9, 2.0, 2.3, 1.8],
+	                ]
+	            });
+	        }, 1500);
+	
+	        setTimeout(function () {
+	            chart.unload({
+	                ids: 'data1'
+	            });
+	            chart.unload({
+	                ids: 'data2'
+	            });
+	        }, 2500);
+	
+	        var axisChart = c3.generate({
+	            bindto: '#progAxis-chart',
+	            size: {
+	                height: 340,
+	                width: 500
+	            },
+	            data: {
+	              columns: [
+	                ['Victoires par mois', 3, 6, 4, 5, 7, 9],
+	              ]
+	            }
+	        });
+		</script>
 	</body>
 </html>
