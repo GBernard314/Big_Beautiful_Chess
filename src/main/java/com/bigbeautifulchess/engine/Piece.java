@@ -49,15 +49,6 @@ public class Piece {
 	 * @param color of the piece
 	 * @param type  of the piece
 	 */
-	public Piece(int x, int y, int color, char type) {
-		super();
-		this.coord = new Coord(x, y);
-		this.color = color;
-		this.type = type;
-		this.theoretical_moves = moves();
-		this.moves = moves();
-		this.moved = false;
-	}
 	
 	/**
 	 * Used to create a piece
@@ -305,13 +296,13 @@ public class Piece {
 		// if the pawn is white he can go up
 		if (getColor() == 0) {
 			// if the pawn never moved it can move 2 cells
-			if (!getMoved()) {
+			if (!this.getMoved()) {
 				pawn_moves.add(new Coord(x - 1, y));
 				pawn_moves.add(new Coord(x - 2, y));
 			}
 			// else only 1 cell
 			else {
-				pawn_moves.add(new Coord(x, y-1));
+				pawn_moves.add(new Coord(x - 1, y));
 			}
 		}
 		// else he only goes down

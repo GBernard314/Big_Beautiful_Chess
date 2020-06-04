@@ -62,8 +62,15 @@ public class BigbeautifulchessApplication {
 		b.eat(b.getPieceOnCell(5, 2), new Piece(0, 2));
 		b.printBoard();
 
-		b.getPieceOnCell(6, 4).printPiece();	
-		b.printMovements(b.getPieceOnCell(6, 4));	
+		b.getPieceOnCell(6, 4).printPiece();		
+		b.printMovements(b.getPieceOnCell(6, 1));
+		b.getPieceOnCell(6, 1).setMoved(true);
+		b.printMovements(b.getPieceOnCell(6, 2));	
+		b.printMovements(b.getPieceOnCell(6, 3));	
+		b.printMovements(b.getPieceOnCell(6, 4));
+		b.printMovements(b.getPieceOnCell(6, 5));
+		b.printMovements(b.getPieceOnCell(6, 6));	
+		b.printMovements(b.getPieceOnCell(6, 7));		
 		b.printHistoric();
 		
 		
