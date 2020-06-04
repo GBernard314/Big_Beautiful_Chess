@@ -27,11 +27,11 @@
 								(piece.color==0? 'clickablePawn' : 'adversePawn') )  }" 
 								style="width: 100%; height: 100%; display: block; text-decoration: none" href="#" th:onclick="actionCase([[${x}]],[[${y}]])">
 								
-									<img class="p-1 py-2" th:unless="${piece.isEmpty()}" th:alt="${piece.type}" th:src='${"assets/chess_icons/"+ (piece.color==0? "white" : "black") +"/"+piece.type+".svg"}'>
+									<img class="p-1 py-2" th:unless="${piece.isEmpty()}" th:alt="${piece.type}" th:src='${"/assets/chess_icons/"+ (piece.color==0? "white" : "black") +"/"+piece.type+".svg"}'>
 									<!-- Movement helpers -->
 									<th:block th:if="${piece.isEmpty() and pieceInSelection!=null and moves !=null}">
 										<th:block th:each="move : ${moves}">
-											<img th:if="${move.equals(x,y)}" class="dotHelper" th:src="@{assets/chess_icons/dot.svg}" width="32">
+											<img th:if="${move.equals(x,y)}" class="dotHelper" th:src="@{/assets/chess_icons/dot.svg}" width="32">
 										</th:block>
 									</th:block>
 							</a>
@@ -103,7 +103,7 @@
 	     	}
 	     	
 	     	function actionCase(x,y){
-	     		 var link="/play/select/";
+	     		 var link="/game/play/select/";
 	     		 link+= x.toString(),
 	     		 link += ",";
 	     		link+= y.toString();

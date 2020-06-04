@@ -24,7 +24,7 @@
 								</thead>
 								<tbody>
 									<tr th:each="friend : ${friends}">
-										<td><img src="../assets/images/users/8.jpg"
+										<td><img th:src="@{/assets/images/users/8.jpg}"
 											class="rounded-circle" style="width: auto; height: 2.5em;">
 										</td>
 										<td th:text="${friend.username}">Joe Danger</td>
@@ -86,8 +86,8 @@
 								</tbody>
 							</table>
 						</div>
-						<a th:href="@{/games/history}" class="btn btn-secondary">Historique</a>
-						<a th:href="@{/games/ongoing}" class="btn btn-secondary">Autres parties en cours</a>
+						<a th:href="@{/game/history}" class="btn btn-secondary">Historique</a>
+						<a th:href="@{/game/ongoing}" class="btn btn-secondary">Autres parties en cours</a>
 					</div>
 				</div>
 			</div>
@@ -138,14 +138,14 @@
 				<div class="card-body">
 					<div class="d-flex align-items-center">
 						<div class="button-group">
-							<a href="#" th:href="@{/play}"
+							<a href="#" th:href="@{/game/play}"
 								class="btn waves-effect waves-light btn-primary">
 								<i class="m-r-10 fas fa-chess-pawn"></i> Nouvelle partie
 							</a>
-							<button type="button"
+							<a th:href="@{/game/ongoing}"
 								class="btn waves-effect waves-light btn-success">
 								<i class="m-r-10 fas fa-chess-bishop"></i> Rejoindre une partie
-							</button>
+							</a>
 						</div>
 						<span class="ml-auto">
 							<p class="h3 m-b-0 font-light">23</p>
