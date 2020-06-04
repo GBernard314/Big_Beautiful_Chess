@@ -23,7 +23,7 @@ import com.bigbeautifulchess.repository.GameRepository;
 import com.bigbeautifulchess.repository.UserRepository;
 
 @Controller
-@RequestMapping("/game")
+@RequestMapping("/games")
 public class GameController {
 	
 	@Autowired
@@ -60,35 +60,33 @@ public class GameController {
 		
 		gameRepository.save(game);
 		
-		return "index.html";
+		return "redirect:/";
 	}
 	
-	@GetMapping("/viewPlayers")
-	public String returnPlayersOfGame(Authentication authentication, Model model) {
-		Game g = new Game();
-		
-		List<Game> finishedGame = em.createQuery("select g from Game g JOIN g.users us where g.flag_winner !=:value and us.username = :valuename ",Game.class)
-							.setParameter("value", -1)
-							.setParameter("valuename", authentication.getName())
-							.getResultList();
-		
-		List <Game> onGoingGame = em.createQuery("select g from Game g JOIN g.users us where g.flag_winner =:value and us.username = :valuename ",Game.class)
-				.setParameter("value", -1)
-				.setParameter("valuename", authentication.getName())
+
+	private List<Game> getGames(String username, Boolean ongoing) {
+		int finishedParam;
+		if(ongoing == true) finishedParam = -1;
+		else finishedParam = 1;
+		User user = userRepository.findByUsername(username);
+		List<Game> games = em.createQuery("select g from Game g JOIN g.users us where g.flag_winner !=:value and us.username = :valuename ",Game.class)
+				.setParameter("value", finishedParam)
+				.setParameter("valuename", username)
 				.getResultList();
-									
-		model.addAttribute("finishedGames", finishedGame);
-		model.addAttribute("onGoingGame", onGoingGame);
-		for(int i=0; i<finishedGame.size(); i++) {
-			System.out.print("Finished");
-			System.out.println(finishedGame.get(i).getId());
-		}
-		
-		for(int i=0; i<onGoingGame.size(); i++) {
-			System.out.print("On going");
-			System.out.println(onGoingGame.get(i).getId());
-		}
-		 
-		return "index.html";
+		return games;
+	}
+	
+	@GetMapping("/history")
+	public String history(Model model, Authentication authentication) {
+		model.addAttribute("label", "Historique des parties");
+		model.addAttribute("gameList", getGames(authentication.getName(), true));
+		return "game-history";
+	}
+	
+	@GetMapping("/ongoing")
+	public String ongoing(Model model, Authentication authentication) {
+		model.addAttribute("label", "Parties en cours");
+		model.addAttribute("gameList", getGames(authentication.getName(), false));
+		return "game-history";
 	}
 }

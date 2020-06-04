@@ -67,7 +67,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr th:each="game : ${onGoingGames}">
+									<tr th:if="${onGoingGames}" th:each="game : ${onGoingGames}">
 										<td>1</td>
 										<td th:text="${game.getUsers()[0].username}">Max</td>
 										<td>26:12</td>
@@ -86,7 +86,8 @@
 								</tbody>
 							</table>
 						</div>
-						<a href="#" class="btn btn-secondary">Historique</a>
+						<a th:href="@{/games/history}" class="btn btn-secondary">Historique</a>
+						<a th:href="@{/games/ongoing}" class="btn btn-secondary">Autres parties en cours</a>
 					</div>
 				</div>
 			</div>
