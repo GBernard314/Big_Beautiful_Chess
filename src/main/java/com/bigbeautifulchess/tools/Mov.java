@@ -60,12 +60,5 @@ public class Mov {
 		this.to = to;
 		this.p2 = p2;
 	}
-
-
-	public Mov(Coord from, Coord to) {
-		super();
-		this.from = from;
-		this.to = to;
-	}
 	
 }
