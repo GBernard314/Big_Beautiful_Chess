@@ -231,7 +231,11 @@ public class Board {
 		this.time_black = time_black;
 		this.time_white = time_white;
 		this.historic = h;
-		this.storage = new TimeStamp(Integer.parseInt(storage.split(":")[0]), Integer.parseInt(storage.split(":")[1]), Integer.parseInt(storage.split(":")[2]));
+		if (this.storage == null) {
+			this.storage = new TimeStamp();
+		} else {
+			this.storage = new TimeStamp(Integer.parseInt(storage.split(":")[0]), Integer.parseInt(storage.split(":")[1]), Integer.parseInt(storage.split(":")[2]));
+		}
 	}
 
 
@@ -816,6 +820,10 @@ public class Board {
 			}
 		}
 
+
+		int px = pawn.getC().getX();
+		int py = pawn.getC().getY();
+		
 		// We verify if the destination cells contains a piece
 		for (int i = 0; i < pawn.getMoves().size(); i++) {
 			int x = pawn.getMoves().get(i).getX();
@@ -829,14 +837,17 @@ public class Board {
 				impossible_moves.add(c);
 				removed++;
 			}
-			// if the opponent is in front, we remove every move
-			if (removed == 1) {
-				impossible_moves.add(c);
+			// if there is a piece directly in front we remove every move
+			if (pawn.getColor() == 0) {
+				if (getPieceOnCell(px-1, py).getType() != 'e') {
+					pawn_final_moves.clear();
+				}
+			} else {
+				if (getPieceOnCell(px+1, py).getType() != 'e') {
+					pawn_final_moves.clear();
+				}
 			}
 		}
-
-		int px = pawn.getC().getX();
-		int py = pawn.getC().getY();
 
 		// We check for diagonal eating-moves
 		// if it's white

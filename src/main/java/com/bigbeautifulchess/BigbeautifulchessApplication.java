@@ -61,7 +61,9 @@ public class BigbeautifulchessApplication {
 		//white turn
 		b.eat(b.getPieceOnCell(5, 2), new Piece(0, 2));
 		b.printBoard();
-		
+
+		b.getPieceOnCell(6, 4).printPiece();	
+		b.printMovements(b.getPieceOnCell(6, 4));	
 		b.printHistoric();
 		
 		

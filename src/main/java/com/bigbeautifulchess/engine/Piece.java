@@ -306,8 +306,8 @@ public class Piece {
 		if (getColor() == 0) {
 			// if the pawn never moved it can move 2 cells
 			if (!getMoved()) {
-				pawn_moves.add(new Coord(y - 1, x));
-				pawn_moves.add(new Coord(y - 2, x));
+				pawn_moves.add(new Coord(x - 1, y));
+				pawn_moves.add(new Coord(x - 2, y));
 			}
 			// else only 1 cell
 			else {
