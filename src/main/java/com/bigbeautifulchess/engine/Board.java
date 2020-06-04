@@ -1,8 +1,15 @@
 package com.bigbeautifulchess.engine;
 
+import com.bigbeautifulchess.tools.*;
+import java.sql.Date;
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 
@@ -43,7 +50,7 @@ public class Board {
 	/**
 	 * We need to store a date in order to manage time
 	 */
-	private LocalDateTime storage;
+	private TimeStamp storage;
 
 	/**
 	 * We save every move made
@@ -52,7 +59,7 @@ public class Board {
 
 	/**
 	 * To have an empty board
-	 * 
+	 *
 	 * @param b
 	 */
 	public Board(boolean b) {
@@ -67,6 +74,7 @@ public class Board {
 		this.turn = 0;
 		this.result = -1;
 		this.historic = new ArrayList<Mov>();
+		this.storage = new TimeStamp();
 	}
 
 	/**
@@ -109,12 +117,12 @@ public class Board {
 		this.turn = 0;
 		this.result = -1;
 		this.historic = new ArrayList<Mov>();
-
+		this.storage = new TimeStamp();
 	}
 
 	/**
 	 * To create instance of board with BDD data
-	 * 
+	 *
 	 * @param bdd
 	 * @param turn
 	 * @param result
@@ -123,7 +131,7 @@ public class Board {
 	 * @param storage
 	 * @param historic
 	 */
-	public Board(String bdd, int turn, int result, int time_black, int time_white, LocalDateTime storage,
+	public Board(String bdd, int turn, int result, int time_black, int time_white, String storage,
 			String historic) {
 		super();
 		Piece[][] c = new Piece[8][8];
@@ -153,6 +161,7 @@ public class Board {
 
 					int x = Integer.parseInt(coords[0]);
 					int y = Integer.parseInt(coords[1]);
+
 					// boolean
 					boolean m = Integer.parseInt(coords[2]) >= 1 ? true : false;
 
@@ -161,19 +170,19 @@ public class Board {
 					case 0:
 						c[x][y] = new Piece(x, y, color, 'p', m);
 						break;
-					case 2:
+					case 1:
 						c[x][y] = new Piece(x, y, color, 'r', m);
 						break;
-					case 3:
+					case 2:
 						c[x][y] = new Piece(x, y, color, 'h', m);
 						break;
-					case 4:
+					case 3:
 						c[x][y] = new Piece(x, y, color, 'b', m);
 						break;
-					case 5:
+					case 4:
 						c[x][y] = new Piece(x, y, color, 'q', m);
 						break;
-					case 6:
+					case 5:
 						c[x][y] = new Piece(x, y, color, 'k', m);
 						break;
 
@@ -221,10 +230,206 @@ public class Board {
 		this.result = result;
 		this.time_black = time_black;
 		this.time_white = time_white;
-		this.storage = storage;
 		this.historic = h;
+		this.storage = new TimeStamp(Integer.parseInt(storage.split(":")[0]), Integer.parseInt(storage.split(":")[1]), Integer.parseInt(storage.split(":")[2]));
 	}
 
+
+	
+	/**
+	 * Serialize content of Cells[][] into String
+	 * @return String serialized
+	 */
+	public String cellsToString() {
+		Piece[][] c = this.getCells();
+
+		StringBuilder finalString = new StringBuilder();
+		StringBuilder pawnW = new StringBuilder();
+		StringBuilder pawnB = new StringBuilder();
+		StringBuilder rookW = new StringBuilder();
+		StringBuilder rookB = new StringBuilder();
+		StringBuilder horseW = new StringBuilder();
+		StringBuilder horseB = new StringBuilder();
+		StringBuilder bishopW = new StringBuilder();
+		StringBuilder bishopB = new StringBuilder();
+		StringBuilder queenW = new StringBuilder();
+		StringBuilder queenB = new StringBuilder();
+		StringBuilder kingW = new StringBuilder();
+		StringBuilder kingB = new StringBuilder();
+
+		for (int i = 0; i < c.length; i++) {
+			for (int j = 0; j < c[i].length; j++) {
+				int m = c[i][j].getMoved() == true ? 1: 0;
+				int color = c[i][j].getColor();
+				switch (c[i][j].getType()) {
+				case 'p':
+					if (color == 0) {
+						pawnW.append(i);
+						pawnW.append(",");
+						pawnW.append(j);
+						pawnW.append(",");
+						pawnW.append(m);
+						pawnW.append(";");
+					} else {
+						pawnB.append(i);
+						pawnB.append(",");
+						pawnB.append(j);
+						pawnB.append(",");
+						pawnB.append(m);
+						pawnB.append(";");
+					}
+					break;
+				case 'r':
+					if (color == 0) {
+						rookW.append(i);
+						rookW.append(",");
+						rookW.append(j);
+						rookW.append(",");
+						rookW.append(m);
+						rookW.append(";");
+					} else {
+						rookB.append(i);
+						rookB.append(",");
+						rookB.append(j);
+						rookB.append(",");
+						rookB.append(m);
+						rookB.append(";");
+					}
+					break;
+				case 'h':
+					if (color == 0) {
+						horseW.append(i);
+						horseW.append(",");
+						horseW.append(j);
+						horseW.append(",");
+						horseW.append(m);
+						horseW.append(";");
+					} else {
+						horseB.append(i);
+						horseB.append(",");
+						horseB.append(j);
+						horseB.append(",");
+						horseB.append(m);
+						horseB.append(";");
+					}
+					break;
+				case 'b':
+					if (color == 0) {
+						bishopW.append(i);
+						bishopW.append(",");
+						bishopW.append(j);
+						bishopW.append(",");
+						bishopW.append(m);
+						bishopW.append(";");
+					} else {
+						bishopB.append(i);
+						bishopB.append(",");
+						bishopB.append(j);
+						bishopB.append(",");
+						bishopB.append(m);
+						bishopB.append(";");
+					}
+					break;
+				case 'q':
+					if (color == 0) {
+						queenW.append(i);
+						queenW.append(",");
+						queenW.append(j);
+						queenW.append(",");
+						queenW.append(m);
+						queenW.append(";");
+					} else {
+						queenB.append(i);
+						queenB.append(",");
+						queenB.append(j);
+						queenB.append(",");
+						queenB.append(m);
+						queenB.append(";");
+					}
+					break;
+				case 'k':
+					if (color == 0) {
+						kingW.append(i);
+						kingW.append(",");
+						kingW.append(j);
+						kingW.append(",");
+						kingW.append(m);
+						kingW.append(";");
+					} else {
+						kingB.append(i);
+						kingB.append(",");
+						kingB.append(j);
+						kingB.append(",");
+						kingB.append(m);
+						kingB.append(";");
+					}
+					break;
+				}
+			}
+		}
+
+		finalString.append(pawnW);
+		finalString.append("/");
+		finalString.append(pawnB);
+		finalString.append("|");
+		finalString.append(rookW);
+		finalString.append("/");
+		finalString.append(rookB);
+		finalString.append("|");
+		finalString.append(horseW);
+		finalString.append("/");
+		finalString.append(horseB);
+		finalString.append("|");
+		finalString.append(bishopW);
+		finalString.append("/");
+		finalString.append(bishopB);
+		finalString.append("|");
+		finalString.append(queenW);
+		finalString.append("/");
+		finalString.append(queenB);
+		finalString.append("|");
+		finalString.append(kingW);
+		finalString.append("/");
+		finalString.append(kingB);
+		finalString.append("|");
+		
+		return finalString.toString();
+	}
+
+	/**
+	 * Serialize content of historic into String
+	 * @return String serialized
+	 */
+	public String historicToString() {
+		StringBuilder strBuilder = new StringBuilder();
+		for (int i = 0; i < this.getHistoric().size(); i++) {
+			Mov temp = this.getHistoric().get(i);
+			char ch1 = temp.getP1();
+			char ch2 = temp.getP2();
+			int x1 = temp.getFrom().getX();
+			int y1 = temp.getFrom().getY();
+			int x2 = temp.getTo().getX();
+			int y2 = temp.getTo().getY();
+			strBuilder.append(ch1);
+			strBuilder.append(":");
+			strBuilder.append(x1);
+			strBuilder.append(",");
+			strBuilder.append(y1);
+			strBuilder.append("-");
+			strBuilder.append(ch2);
+			strBuilder.append(":");
+			strBuilder.append(x2);
+			strBuilder.append(",");
+			strBuilder.append(y2);
+			strBuilder.append(";");
+		}
+		return strBuilder.toString();
+	}
+	
+	public String storageToString() {
+		return this.storage.toString();
+	}
+	
 	public Board(Piece[][] cells, int turn, int result) {
 		super();
 		this.cells = cells;
@@ -288,13 +493,13 @@ public class Board {
 	public void setTime_white(int time_white) {
 		this.time_white = time_white;
 	}
-
-	public LocalDateTime getStorage() {
-		return storage;
-	}
-
-	public void setStorage(LocalDateTime storage) {
+	
+	public void setStorage(TimeStamp storage) {
 		this.storage = storage;
+	}
+	
+	public TimeStamp getStorage() {
+		return this.storage;
 	}
 
 	public Board clone() {
@@ -492,7 +697,7 @@ public class Board {
 
 	/**
 	 * Print possible destination cells in the terminal
-	 * 
+	 *
 	 * @param p ArrayList of cells
 	 */
 	public void printMovements(Piece p) {
@@ -540,7 +745,7 @@ public class Board {
 
 	/**
 	 * Gives us the Piece that is at x and y coordinates
-	 * 
+	 *
 	 * @param x Coordinate
 	 * @param y Coordinate
 	 * @return a Piece at (x;y)
@@ -551,7 +756,7 @@ public class Board {
 
 	/**
 	 * Rework the possible moves according to the board
-	 * 
+	 *
 	 * @param king is the piece we work on
 	 */
 	public void cleanMovesKing(Piece king) {
@@ -595,7 +800,7 @@ public class Board {
 
 	/**
 	 * Rework the possible moves according to the board
-	 * 
+	 *
 	 * @param pawn is the piece we work on
 	 */
 	public void cleanMovesPawn(Piece pawn) {
@@ -674,7 +879,7 @@ public class Board {
 
 	/**
 	 * Rework the possible moves according to the board
-	 * 
+	 *
 	 * @param rook is the piece we work on
 	 */
 	public void cleanMovesRook(Piece rook) {
@@ -803,7 +1008,7 @@ public class Board {
 
 	/**
 	 * Rework the possible moves according to the board
-	 * 
+	 *
 	 * @param bishop is the piece we work on
 	 */
 	public void cleanMovesBishop(Piece bishop) {
@@ -943,7 +1148,7 @@ public class Board {
 
 	/**
 	 * Rework the possible moves according to the board
-	 * 
+	 *
 	 * @param queen is the piece we work on
 	 */
 	public void cleanMovesQueen(Piece queen) {
@@ -956,7 +1161,7 @@ public class Board {
 
 	/**
 	 * Rework the possible moves according to the board
-	 * 
+	 *
 	 * @param horse is the piece we work on
 	 */
 	public void cleanMovesHorse(Piece horse) {
@@ -1013,7 +1218,7 @@ public class Board {
 
 	/**
 	 * Verify is the actual player can do the big castling move
-	 * 
+	 *
 	 * @return true or false in answer of the method's name
 	 */
 	public boolean isBigCastlingOk() {
@@ -1093,7 +1298,7 @@ public class Board {
 
 	/**
 	 * Verify is the actual player can do the small castling move
-	 * 
+	 *
 	 * @return true or false in answer of the method's name
 	 */
 	public boolean isSmallCastlingOk() {
@@ -1178,7 +1383,7 @@ public class Board {
 
 	/**
 	 * Verify is the actual player can do a castling move
-	 * 
+	 *
 	 * @return true or false in answer of the method's name
 	 */
 	public boolean isCastlingOk() {
@@ -1191,7 +1396,7 @@ public class Board {
 
 	/**
 	 * To find if the king is being checked
-	 * 
+	 *
 	 * @return a boolean to answer the method name
 	 */
 	public boolean isChecked() {
@@ -1215,7 +1420,7 @@ public class Board {
 
 	/**
 	 * Simple method to have the actual turn king's
-	 * 
+	 *
 	 * @return the piece corresponding of the king
 	 */
 	public Piece getKing() {
@@ -1232,7 +1437,7 @@ public class Board {
 
 	/**
 	 * Method to move one piece, and also manage the time between each eat()
-	 * 
+	 *
 	 * @param hunter the piece to move
 	 * @param hunted the destination piece
 	 */
@@ -1268,17 +1473,23 @@ public class Board {
 
 		// we check if it's first turn, so time will start after this move
 		if (this.getTime_black() == this.getTime_white() && this.getTime_black() == 2400) {
-			this.setStorage(LocalDateTime.now());
+			this.setStorage(new TimeStamp());
 		} else {
 			// if it's the black turn
 			if (this.getTurn() == 1) {
-				this.setTime_black((int) ChronoUnit.SECONDS.between(this.getStorage(), LocalDateTime.now()));
-				this.setStorage(LocalDateTime.now());
+				TimeStamp newTime = new TimeStamp();
+				int delta_minutes = this.getStorage().getMinute() - newTime.getSeconds();
+				int delta_seconds = this.getStorage().getSeconds() - newTime.getSeconds();
+				this.setTime_black(this.getTime_black() - delta_minutes * 60 - delta_seconds);
+				this.setStorage(new TimeStamp());
 			}
 			// if it's the white turn
 			else {
-				this.setTime_white((int) ChronoUnit.SECONDS.between(this.getStorage(), LocalDateTime.now()));
-				this.setStorage(LocalDateTime.now());
+				TimeStamp newTime = new TimeStamp();
+				int delta_minutes = this.getStorage().getMinute() - newTime.getSeconds();
+				int delta_seconds = this.getStorage().getSeconds() - newTime.getSeconds();
+				this.setTime_white(this.getTime_white() - delta_minutes * 60 - delta_seconds);
+				this.setStorage(new TimeStamp());
 			}
 		}
 
@@ -1291,7 +1502,7 @@ public class Board {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param hunter piece
 	 * @param hunted piece
 	 * @return true if you can do this move without being in check after and is
@@ -1358,7 +1569,7 @@ public class Board {
 
 	/**
 	 * To verify is the actual player has lost
-	 * 
+	 *
 	 * @return true if lost false if not
 	 */
 	public boolean isCheckMate() {
@@ -1429,7 +1640,7 @@ public class Board {
 
 	/**
 	 * Verify draw option according to "no legal moves left" rule
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean staleMate() {
@@ -1473,7 +1684,7 @@ public class Board {
 	/**
 	 * Verify draw option according to the rule "fifty moves with nothing
 	 * interesting"
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean fiftyMoves() {
@@ -1510,7 +1721,7 @@ public class Board {
 
 	/**
 	 * Gathers in one array all the pieces that are still in game
-	 * 
+	 *
 	 * @param turn more exactly color of player's leftovers
 	 * @return
 	 */
@@ -1528,7 +1739,7 @@ public class Board {
 
 	/**
 	 * Verify draw option according to the rule "no mean to check mate"
-	 * 
+	 *
 	 * @return true if impossible to check mate
 	 */
 	public boolean impossibleCheckMate() {

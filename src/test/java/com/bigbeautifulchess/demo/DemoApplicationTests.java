@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,8 @@ import org.springframework.format.datetime.joda.LocalDateTimeParser;
 import com.bigbeautifulchess.engine.Board;
 import com.bigbeautifulchess.engine.Piece;
 import com.bigbeautifulchess.tools.Coord;
+import com.bigbeautifulchess.tools.Mov;
+import com.bigbeautifulchess.tools.TimeStamp;
 
 class DemoApplicationTests {
 
@@ -124,10 +128,10 @@ class DemoApplicationTests {
 
 	@Test
 	void BoardTest() {
-		String plateau = "0,0,0/|/|/|/|/|/|7,7,1/6,6,1";
-		String historic = "k:2,4-e:4,5";
+		String plateau = "0,0,0;/|/|/|/|/|7,7,1;/6,6,1;|";
+		String historic = "k:2,4-e:4,5;";
 		
-		Board tester = new Board(plateau, 0, -1, 0, 0, null, historic);
+		Board tester = new Board(plateau, 0, -1, 0, 0, "10:15:30", historic);
 		tester.updateMoves();
 		
 		assertEquals('p', tester.getPieceOnCell(0, 0).getType());
@@ -136,6 +140,8 @@ class DemoApplicationTests {
 		
 		assertEquals('k', tester.getHistoric().get(0).getP1());
 		assertEquals('e', tester.getHistoric().get(0).getP2());
+		
+		assertEquals(10, tester.getStorage().getHour());
 	}
 	
 	@Test
@@ -761,5 +767,40 @@ class DemoApplicationTests {
 				
 
 	}
+	
+	@Test 
+	void cellsToStringTest() {
+		Board tester = new Board(false);
+		assertEquals("/|/|/|/|/|/|", tester.cellsToString());
+		Board tester2 = new Board(false);
+		tester2.getCells()[0][0] = new Piece(0, 0, 0, 'p', false);
+		tester2.getCells()[0][1] = new Piece(0, 1, 1, 'p', false);
+		tester2.getCells()[0][2] = new Piece(0, 2, 0, 'r', false);
+		tester2.getCells()[0][3] = new Piece(0, 3, 1, 'r', false);
+		tester2.getCells()[0][4] = new Piece(0, 4, 0, 'h', false);
+		tester2.getCells()[0][5] = new Piece(0, 5, 1, 'h', false);
+		tester2.getCells()[0][6] = new Piece(0, 6, 0, 'b', false);
+		tester2.getCells()[0][7] = new Piece(0, 7, 1, 'b', false);
+		tester2.getCells()[1][4] = new Piece(1, 4, 0, 'q', false);
+		tester2.getCells()[1][5] = new Piece(1, 5, 1, 'q', false);
+		tester2.getCells()[1][6] = new Piece(1, 6, 0, 'k', false);
+		tester2.getCells()[1][7] = new Piece(1, 7, 1, 'k', false);
+		assertEquals("0,0,0;/0,1,0;|0,2,0;/0,3,0;|0,4,0;/0,5,0;|0,6,0;/0,7,0;|1,4,0;/1,5,0;|1,6,0;/1,7,0;|", tester2.cellsToString());
+	}
 
+	@Test
+	void historicToString() {
+		Board tester = new Board(false);
+		ArrayList<Mov> movs = new ArrayList<Mov>();
+		movs.add(new Mov(tester.getPieceOnCell(0, 0).getType(), new Piece(0, 0).getCoord(),tester.getPieceOnCell(1, 1).getType(), new Piece(1,1).getCoord()));
+		tester.setHistoric(movs);
+		assertEquals("e:0,0-e:1,1;", tester.historicToString());
+	}
+	
+	@Test
+	void storageToString() {
+		Board tester = new Board(false);
+		TimeStamp time = new TimeStamp();
+		assertEquals("4", tester.storageToString().split(":")[0]);
+	}
 }
