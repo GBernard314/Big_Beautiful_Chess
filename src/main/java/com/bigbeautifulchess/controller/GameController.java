@@ -31,7 +31,7 @@ public class GameController {
 	
 	private Board b;
 	private Piece selectedPiece;
-	private int myColor = 0;
+	private int nbTours = 0;
 	
 	private User myself;
 	private User opponent;
@@ -49,7 +49,7 @@ public class GameController {
 	@GetMapping("/new/{adversaire}")
 	public String initGame(Model model, Authentication authentication, @PathVariable String adversaire){
 		List <User> users = new ArrayList<>();
-		myself = userRepository.findByUsername("test");
+		myself = userRepository.findByUsername(authentication.getName());
 		opponent = userRepository.findByUsername(adversaire);
         System.out.println(myself.getUsername());
         System.out.println(opponent.getUsername());
@@ -69,17 +69,18 @@ public class GameController {
 		game.setFlag_winner(b.getResult());
 		game.setBoard_info(b.cellsToString());
 		game.setForfeit(false); //TODO : forfait
-		game.setNb_turn(5); //TODO : nbTurn
+		game.setNb_turn(nbTours);
 		game.setTime_user1(b.getTime_white());
 		game.setTime_user2(b.getTime_black());
 		game.setUsers(users);
 		game.setStorage(b.storageToString());
-		game.setMouv("feziufhezf"); //TODO : c'est quoi ?
+		game.setMouv(b.historicToString());
 		
 		gameRepository.save(game);
 		
 		myself = null;
 		opponent = null;
+		nbTours=0;
 		
 		return "redirect:/";
 	}
@@ -178,6 +179,10 @@ public class GameController {
 		if(opponent != null)
 			model.addAttribute("opponent",opponent);
 		
+		System.out.println("is small castling ok ? " + b.isSmallCastlingOk());
+		System.out.println("is big castling ok ? " + b.isBigCastlingOk());
+		System.out.println("Egalite ? " + b.draw());
+		
 		return "play";
 	}
 	
@@ -187,6 +192,7 @@ public class GameController {
 		
 		/* Uncomment to see game in console : */ 
 		b.printBoardSimple();
+		nbTours = 0;
 		
 		selectedPiece = null;
 		
@@ -194,20 +200,61 @@ public class GameController {
 	}
 	
 	@GetMapping("/play/select/{x},{y}")
-	public String selectPiece( @PathVariable int x,@PathVariable int y,Model model) {
+	public String selectPiece( @PathVariable int x,@PathVariable int y,Model model, Authentication auth) {
 		if(b == null) {
 			return "redirect:/game/reset";
 		}
 		Piece clickedCell = b.getPieceOnCell(x,y);
-		if(selectedPiece == null){ //Cas selection d'un pion
-			if(true || clickedCell.getColor() == myColor) { //Debug : les deux couleurs sont jouables
+		boolean isopponent = (auth.getName().equals(opponent.getUsername()))? true : false;
+		int cellColor = clickedCell.getColor();
+		
+		if(isopponent) { //Joueur noir
+			if(selectedPiece == null){ //Cas selection d'un pion
+				System.out.println("Joueur noir détécté");
+				if(b.getTurn() == 0) {
+					//Pas son tour
+					return "redirect:/game/play";
+				}
+				if(cellColor == 0) {
+					//Joueur noir clique sur blanc, on redirige
+					return "redirect:/game/play";
+				}
 				selectedPiece = b.getPieceOnCell(x,y);
 				selectedPiece.printPiece();
 			}
+			else{ //Un pion est deja selectionné, on deplace ou mange
+				b.eat(selectedPiece, clickedCell);
+				selectedPiece = null;
+				nbTours++;
+			}
+		}else { //Joueur blanc
+			System.out.println("Joueur blanc détécté");
+			if(b.getTurn() == 1) {
+				//Pas son tour
+				return "redirect:/game/play";
+			}
+			if(selectedPiece == null){ //Cas selection d'un pion
+				if(cellColor == 1) {
+					//Joueur blanc clique sur noir
+					return "redirect:/game/play";
+				}
+				selectedPiece = b.getPieceOnCell(x,y);
+				selectedPiece.printPiece();
+			}
+			else{ //Un pion est deja selectionné, on deplace ou mange
+				b.eat(selectedPiece, clickedCell);
+				selectedPiece = null;
+				nbTours++;
+			}
 		}
-		else{ //Un pion est deja selectionné, on deplace ou mange
-			b.eat(selectedPiece, clickedCell);
-			selectedPiece = null;
+		
+		//Verification supplémentaire pour victoire
+		if(b.isCheckMate()) {
+			if(isopponent) {
+				b.setResult(2);
+			}else {
+				b.setResult(1);
+			}
 		}
 		
 		return "redirect:/game/play";
