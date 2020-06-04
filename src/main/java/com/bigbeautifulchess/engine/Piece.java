@@ -69,7 +69,11 @@ public class Piece {
 		this.theoretical_moves = moves();
 		this.moves = moves();
 	}
-
+	
+	public Piece(int x, int y, int color, char type) {
+		 Piece(x,y,color, ctype, false);
+	}
+	
 	/**
 	 * Used to create an empty board cell
 	 * 
@@ -305,7 +309,7 @@ public class Piece {
 			}
 			// else only 1 cell
 			else {
-				pawn_moves.add(new Coord(x - 1, y));
+				pawn_moves.add(new Coord(x-1, y));
 			}
 		}
 		// else he only goes down

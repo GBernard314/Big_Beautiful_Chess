@@ -24,7 +24,7 @@ public class Board {
 
 	/**
 	 * 0 or 1 for each player's turn
-	 */	
+	 */
 	private int turn;
 
 	/**
@@ -51,7 +51,6 @@ public class Board {
 	 * We need to store a date in order to manage time
 	 */
 	private TimeStamp storage;
-	
 
 	/**
 	 * We save every move made
@@ -512,6 +511,7 @@ public class Board {
 		Piece cells[][] = new Piece[8][8];
 		int result = this.getResult();
 		int turn = this.getTurn();
+
 		for (int i = 0; i < getCells().length; i++) {
 			for (int j = 0; j < getCells()[i].length; j++) {
 				int x = getCells()[i][j].getC().getX();
@@ -1454,6 +1454,7 @@ public class Board {
 	 * @param hunted the destination piece
 	 */
 	public void eat(Piece hunter, Piece hunted) {
+
 		int hunter_x = hunter.getC().getX();
 		int hunter_y = hunter.getC().getY();
 		int hunted_x = hunted.getC().getX();
