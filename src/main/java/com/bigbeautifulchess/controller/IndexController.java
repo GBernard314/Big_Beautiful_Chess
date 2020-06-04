@@ -63,7 +63,7 @@ public class IndexController {
 		  }
 		int gameCount = (int) gameRepository.count();
 		
-		model.addAttribute("onGoingGames-count", gameCount);
+		model.addAttribute("onGoingGamesCount", gameCount);
 		model.addAttribute("userInfo", user);
 		model.addAttribute("friends", userlist);
 		model.addAttribute("onGoingGames", onGoingGame);

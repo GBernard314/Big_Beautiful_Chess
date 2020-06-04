@@ -50,7 +50,7 @@
 			<p th:if="${board.lost == false}" th:text="'Cases sûres restantes : ' + ${(board.getNombreCases() -board.getNombreCasesDecouvertes()) - board.getNbMine()} + '/' + ${board.getNombreCases()}">Nombre de cases : 0 </p>
 			<p th:if="${board.lost == false}" th:text="'Probabilité de ne pas tomber sur une mine : ' + ${board.retourneChance()} +'%'">Chance de victoires : 0 </p>
 			-->
-			<a class="btn btn-primary" href="#" th:href="|/reset|">Reinitialiser</a>
+			<a class="btn btn-primary" href="#" th:href="@{/game/reset}">Reinitialiser</a>
 			<a th:if="${board.result < 0}" th:href="@{|/gamemode/list|}" class="btn btn-secondary">Modes de jeux</a>
 			<a th:if="${board.result < 0}" th:href="@{|/|}" class="btn btn-info">Accueil</a>
 			<a th:unless="${board.result < 0}" th:href="@{|/saveGame|}" class="btn btn-info">Sauver ma progression</a>

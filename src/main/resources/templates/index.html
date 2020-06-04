@@ -138,7 +138,7 @@
 				<div class="card-body">
 					<div class="d-flex align-items-center">
 						<div class="button-group">
-							<a href="#" th:href="@{/game/play}"
+							<a href="#" th:href="@{/game/reset}"
 								class="btn waves-effect waves-light btn-primary">
 								<i class="m-r-10 fas fa-chess-pawn"></i> Nouvelle partie
 							</a>
@@ -148,7 +148,7 @@
 							</a>
 						</div>
 						<span class="ml-auto">
-							<p class="h3 m-b-0 font-light">23</p>
+							<p th:text="${onGoingGamesCount} + ' en cours'" class="h3 m-b-0 font-light">23</p>
 						</span>
 					</div>
 				</div>
