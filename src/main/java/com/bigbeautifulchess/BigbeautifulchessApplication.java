@@ -64,17 +64,12 @@ public class BigbeautifulchessApplication {
 
 		b.getPieceOnCell(6, 4).printPiece();		
 		b.printMovements(b.getPieceOnCell(6, 1));
-		b.getPieceOnCell(6, 1).setMoved(true);
-		b.printMovements(b.getPieceOnCell(6, 2));	
-		b.printMovements(b.getPieceOnCell(6, 3));	
-		b.printMovements(b.getPieceOnCell(6, 4));
-		b.printMovements(b.getPieceOnCell(6, 5));
-		b.printMovements(b.getPieceOnCell(6, 6));	
-		b.printMovements(b.getPieceOnCell(6, 7));		
+		b.eat(b.getPieceOnCell(6, 1), b.getPieceOnCell(5, 1));
+		b.printMovements(b.getPieceOnCell(5, 1));	
 		b.printHistoric();
 		
 		
-		Board bdd = new Board(plateau, 0, -1, 0, 0, null, historic);
+		Board bdd = new Board(plateau, 0, -1, 0, 0, "10:10:10", historic);
 		bdd.printBoardSimple();
 		/*
 		//To test one-by-one piece from the board

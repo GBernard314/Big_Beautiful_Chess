@@ -231,11 +231,8 @@ public class Board {
 		this.time_black = time_black;
 		this.time_white = time_white;
 		this.historic = h;
-		if (this.storage == null) {
-			this.storage = new TimeStamp();
-		} else {
-			this.storage = new TimeStamp(Integer.parseInt(storage.split(":")[0]), Integer.parseInt(storage.split(":")[1]), Integer.parseInt(storage.split(":")[2]));
-		}
+		this.storage = new TimeStamp(Integer.parseInt(storage.split(":")[0]), Integer.parseInt(storage.split(":")[1]), Integer.parseInt(storage.split(":")[2]));
+
 	}
 
 
