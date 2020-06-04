@@ -482,4 +482,7 @@ public class Piece {
 		}
 	}
 	
+	public Boolean isEmpty() {
+		return type > 0 ? false : true;
+	}
 }

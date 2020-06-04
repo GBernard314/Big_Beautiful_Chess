@@ -10,15 +10,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.bigbeautifulchess.engine.Board;
+import com.bigbeautifulchess.engine.Piece;
 import com.bigbeautifulchess.tools.Coord;
 
 @Controller
 
 public class PlayController {
 	private Board b;
-	Long cur_mode;
+	private Piece selectedPiece;
 	
 	@GetMapping("/lost")
 	public String lose(Model model) {
@@ -32,6 +34,7 @@ public class PlayController {
 		}
 		
 		model.addAttribute("board", b);
+		model.addAttribute("pieceInSelection", selectedPiece);
 		return "play";
 	}
 	
@@ -42,34 +45,37 @@ public class PlayController {
 		/* Uncomment to see game in console : */ 
 		b.printBoardSimple();
 		
+		selectedPiece = null;
+		
 		return "redirect:/play";
 	}
 	
-	@GetMapping({"/play/move-{x},{y}"})
-	public String move( Model model ,@PathVariable(required=true) int x, @PathVariable(required=true) int y) {
+	@GetMapping("/play/select/{x},{y}")
+	public String selectPiece( @PathVariable int x,@PathVariable int y,Model model) {
 		if(b == null) {
 			return "redirect:/reset";
 		}
-		Coord c = new Coord(x,y);
-		b.getCells()[0][0].setC(c);
+		selectedPiece = b.getPieceOnCell(x,y);
+		selectedPiece.printPiece();
 		
-		model.addAttribute("board", b);
-		return "play";
+		return "redirect:/play";
 	}
 	
-	/*
-	@GetMapping({"/{id}/play"})
-	public String add(@PathVariable(required=false) Long id, Model model) {
-		GameMode mode = modes.findById(id).get();
-		if(mode != null) {
-			cur_mode = id;
-			width = mode.getWidth();
-			height = mode.getHeight();
-			nbmines = mode.getNbMine();
+	@GetMapping("/play/move/{x},{y}")
+	public String movePiece( @PathVariable int x,@PathVariable int y,Model model) {
+		if(b == null) {
+			return "redirect:/reset";
 		}
-		return "redirect:/reset";
+		if(selectedPiece == null) {
+			return "redirect:/play";
+		}
+		
+		selectedPiece.printPiece();
+		selectedPiece.setCoord(new Coord(x,y));
+		
+		return "redirect:/play";
 	}
-	*/
+	
 	
 	//Chargement de partie
 	@GetMapping({"/load/{id}"})
