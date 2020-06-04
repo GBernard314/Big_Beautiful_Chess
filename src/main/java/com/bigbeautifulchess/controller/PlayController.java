@@ -21,6 +21,7 @@ import com.bigbeautifulchess.tools.Coord;
 public class PlayController {
 	private Board b;
 	private Piece selectedPiece;
+	private int myColor = 0;
 	
 	@GetMapping("/lost")
 	public String lose(Model model) {
@@ -35,6 +36,9 @@ public class PlayController {
 		
 		model.addAttribute("board", b);
 		model.addAttribute("pieceInSelection", selectedPiece);
+		if(selectedPiece != null) {
+			model.addAttribute("moves", selectedPiece.getMoves());
+		}
 		return "play";
 	}
 	
@@ -55,23 +59,17 @@ public class PlayController {
 		if(b == null) {
 			return "redirect:/reset";
 		}
-		selectedPiece = b.getPieceOnCell(x,y);
-		selectedPiece.printPiece();
-		
-		return "redirect:/play";
-	}
-	
-	@GetMapping("/play/move/{x},{y}")
-	public String movePiece( @PathVariable int x,@PathVariable int y,Model model) {
-		if(b == null) {
-			return "redirect:/reset";
+		Piece clickedCell = b.getPieceOnCell(x,y);
+		if(selectedPiece == null){ //Cas selection d'un pion
+			if(clickedCell.getColor() == myColor) {
+				selectedPiece = b.getPieceOnCell(x,y);
+				selectedPiece.printPiece();
+			}
 		}
-		if(selectedPiece == null) {
-			return "redirect:/play";
+		else{ //Un pion est deja selectionné, on deplace ou mange
+			b.eat(selectedPiece, clickedCell);
+			selectedPiece = null;
 		}
-		
-		selectedPiece.printPiece();
-		selectedPiece.setCoord(new Coord(x,y));
 		
 		return "redirect:/play";
 	}

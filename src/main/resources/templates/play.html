@@ -21,9 +21,19 @@
 							<td th:each="y : ${#numbers.sequence(0,7,1)}" th:with="piece=${board.cells[x][y]}" 
 								class="text-center caseGrille"
 								th:style="${ (y%2 + x)%2 ==0 ? 'background:lightgrey': 'background:white'}">
-							<a th:if="${!piece.isEmpty() or pieceInSelection!=null}" th:class="${piece.color==1? 'clickablePawn' : 'adversePawn'}" style="width: 100%; height: 100%; display: block; text-decoration: none" href="#" th:onclick="actionCase([[${x}]],[[${y}]])">
-								<div class="selectedPiece" th:if="${pieceInSelection!=null and pieceInSelection.getCoord().getX() == x and pieceInSelection.getCoord().getY() == (y)}"></div>
-								<img class="p-1 py-2" th:unless="${piece.isEmpty()}" th:alt="${piece.type}" th:src='${"assets/chess_icons/"+ (piece.color==0? "white" : "black") +"/"+piece.type+".svg"}'>
+							<a th:if="${!piece.isEmpty() or pieceInSelection!=null}" 
+							th:class="${  piece.isEmpty()? 'clickableEmpty' : 
+								( (pieceInSelection!=null and pieceInSelection.getCoord().equals(x,y)) ? 'selectedPiece' :
+								(piece.color==0? 'clickablePawn' : 'adversePawn') )  }" 
+								style="width: 100%; height: 100%; display: block; text-decoration: none" href="#" th:onclick="actionCase([[${x}]],[[${y}]])">
+								
+									<img class="p-1 py-2" th:unless="${piece.isEmpty()}" th:alt="${piece.type}" th:src='${"assets/chess_icons/"+ (piece.color==0? "white" : "black") +"/"+piece.type+".svg"}'>
+									<!-- Movement helpers -->
+									<th:block th:if="${piece.isEmpty() and pieceInSelection!=null and moves !=null}">
+										<th:block th:each="move : ${moves}">
+											<img th:if="${move.equals(x,y)}" class="dotHelper" th:src="@{assets/chess_icons/dot.svg}" width="32">
+										</th:block>
+									</th:block>
 							</a>
 							</td>
 						</tr>
@@ -31,20 +41,6 @@
 				</table>
 			</div>
 		</div>
-			<div id="btnOptions" style="width: 200px">
-			<p><b>Action au clic</b></p><hr>
-				<!--Discover option option -->
-				<div class="custom-control custom-radio">
-				  <input type="radio" class="custom-control-input" id="radioDiscover" name="groupOfRadios" checked>
-				  <label class="custom-control-label" for="radioDiscover"><span id="cursor1">⛏️</span> Découverte</label>
-				</div>
-				
-				<!--Flag option -->
-				<div class="custom-control custom-radio">
-				  <input type="radio" class="custom-control-input" id="radioFlag" name="groupOfRadios">
-				  <label class="custom-control-label" for="radioFlag"> <span id="cursor2">🚩</span> Drapeau</label>
-				</div>
-			</div>
 		<br>
 		<div class="text-center" >
 			<!-- Infos -->
