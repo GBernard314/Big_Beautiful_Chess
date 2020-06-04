@@ -16,10 +16,9 @@ public class BigbeautifulchessApplication {
 		
 		game.getCells()[3][3] = new Piece(3, 3, 0, 'q', false);
 		game.getCells()[4][4] = new Piece(4, 4, 1, 'p', false);
-		game.getCells()[2][2] = new Piece(2, 2, 0, 'p', false);
+		//game.getCells()[2][2] = new Piece(2, 2, 0, 'p', false);
 		game.getCells()[3][2] = new Piece(3, 2, 0, 'p', false);
 		game.getCells()[4][3] = new Piece(4, 3, 0, 'p', false);
-		game.getCells()[5][1] = new Piece(5, 1, 1, 'p', false);
 		game.getCells()[2][3] = new Piece(2, 3, 1, 'p', false);
 		game.updateMoves();
 		//game.eat(game.getPieceOnCell(4, 4), game.getPieceOnCell(5, 4));
