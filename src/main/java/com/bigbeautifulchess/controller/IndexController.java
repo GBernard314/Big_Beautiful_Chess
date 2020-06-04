@@ -37,13 +37,14 @@ public class IndexController {
 	
 	@Autowired
 	PasswordEncoder passwordEncoder;
-	
+
 	@Autowired
 	private UserRepository userRepository;
 
 	@GetMapping("/")
 	public String welcome(Model model, Authentication authentication) {
-		
+
+		User user = userRepository.findByUsername(authentication.getName());
 		List<Game> finishedGame = em.createQuery("select g from Game g JOIN g.users us where g.flag_winner !=:value and us.username = :valuename ",Game.class)
 				.setParameter("value", -1)
 				.setParameter("valuename", authentication.getName())
@@ -53,7 +54,20 @@ public class IndexController {
 			.setParameter("value", -1)
 			.setParameter("valuename", authentication.getName())
 			.getResultList();
-								
+		
+		List<User> userlist = new ArrayList<>();
+		  String[] friend_list;
+		  if(user.getFriends_list_id() != null) {
+			  friend_list = user.splitFriendsList();
+			  for(String a : friend_list) {
+				  List <User> u = em.createQuery("select u from User u where u.id =:value",User.class)
+						  			.setParameter("value", Long.parseLong(a))
+						  			.getResultList();
+				  userlist.add(u.get(0));
+			  }
+		  }
+		  
+		model.addAttribute("friends", userlist);
 		model.addAttribute("finishedGames", finishedGame);
 		model.addAttribute("onGoingGames", onGoingGame);
 		
@@ -77,6 +91,7 @@ public class IndexController {
 		user.setUsername(form.getUsername());
 		user.setEmail(form.getEmail());
 		user.setPassword(passwordEncoder.encode(form.getPassword()));
+		user.setFriends_list_id("2;3;4");
 		userRepository.save(user);
 		
 		return "redirect:/login";
@@ -85,8 +100,29 @@ public class IndexController {
 
 	  @RequestMapping(value = "/username", method = RequestMethod.GET)
 	  @ResponseBody
-	  public String currentUserName(Authentication authentication) {
-		 System.out.println(authentication.getName());
+	  public String currentUserName(Authentication authentication, Model model) {
+		  User user = userRepository.findByUsername(authentication.getName());
+
+		  List<User> userlist = new ArrayList<>();
+		  String[] friend_list;
+		  if(user.getFriends_list_id() != null) {
+			  friend_list = user.splitFriendsList();
+			  for(String a : friend_list) {
+				  List <User> u = em.createQuery("select u from User u where u.id =:value",User.class)
+						  			.setParameter("value", Long.parseLong(a))
+						  			.getResultList();
+				  userlist.add(u.get(0));
+			  }
+		  }
+		 model.addAttribute("friends", userlist);
+		 for(int i=0; i<userlist.size(); i++) {
+			 System.out.println(userlist.get(i).getUsername());
+			 System.out.println(userlist.get(i).getEmail());
+		 }
+		 if(userlist.size()==0) {
+			 System.out.println("Aucun amis !");
+		 }
+		 
 	     return authentication.getName();
 
 	  }
