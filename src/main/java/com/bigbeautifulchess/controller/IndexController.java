@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +32,10 @@ public class IndexController {
 	@Autowired
 	PasswordEncoder passwordEncoder;
 	
+	@PersistenceContext
+	EntityManager em;
+
+	
 	@Autowired
 	private UserRepository userRepository;
 	
@@ -49,6 +56,7 @@ public class IndexController {
 		user.setUsername(form.getUsername());
 		user.setEmail(form.getEmail());
 		user.setPassword(passwordEncoder.encode(form.getPassword()));
+		user.setFriends_list_id("2;3;4");
 		userRepository.save(user);
 		
 		return "redirect:/login";
@@ -57,8 +65,26 @@ public class IndexController {
 
 	  @RequestMapping(value = "/username", method = RequestMethod.GET)
 	  @ResponseBody
-	  public String currentUserName(Authentication authentication) {
-		 System.out.println(authentication.getName());
+	  public String currentUserName(Authentication authentication, Model model) {
+		  User user = userRepository.findByUsername(authentication.getName());
+		  System.out.println(user);
+		  List<User> userlist = new ArrayList<>();
+		  String[] friend_list;
+		  if(user.getFriends_list_id() != null) {
+			  friend_list = user.splitFriendsList();
+			  for(String a : friend_list) {
+				  List <User> u = em.createQuery("select u from User u where u.id =:value",User.class)
+						  			.setParameter("value", Long.parseLong(a))
+						  			.getResultList();
+				  userlist.add(u.get(0));
+			  }
+		  }
+		 model.addAttribute("friends", userlist);
+		 for(int i=0; i<userlist.size(); i++) {
+			 System.out.println(userlist.get(i).getUsername());
+			 System.out.println(userlist.get(i).getEmail());
+		 }
+		 
 	     return authentication.getName();
 
 	  }

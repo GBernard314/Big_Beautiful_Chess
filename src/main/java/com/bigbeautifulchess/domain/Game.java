@@ -40,13 +40,35 @@ public class Game {
 	@Column
 	protected int time_user2;
 	
+	@Column
+	private String storage;
 	
+	@Column
+	private String mouv;
+	
+	
+	public String getStorage() {
+		return storage;
+	}
+
+	public void setStorage(String storage) {
+		this.storage = storage;
+	}
+
 	public Long getId() {
 		return Id;
 	}
 
 	public void setId(Long id) {
 		Id = id;
+	}
+
+	public String getMouv() {
+		return mouv;
+	}
+
+	public void setMouv(String mouv) {
+		this.mouv = mouv;
 	}
 
 	public List<User> getUsers() {

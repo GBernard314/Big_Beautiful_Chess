@@ -45,6 +45,8 @@ public class GameController {
 		game.setTime_user1(200);
 		game.setTime_user2(600);
 		game.setUsers(user);
+		game.setStorage("10");
+		game.setMouv("feziufhezf");
 		
 		gameRepository.save(game);
 		return "index.html";
@@ -56,7 +58,7 @@ public class GameController {
 		
 		List <Game> finishedGame = em.createQuery("select g from Game g JOIN g.users us where g.flag_winner !=:value and us.username = :valuename ",Game.class)
 							.setParameter("value", -1)
-							.setParameter("valuename", "Pierre")
+							.setParameter("valuename", authentication.getName())
 							.getResultList();
 		
 		List <Game> onGoingGame = em.createQuery("select g from Game g JOIN g.users us where g.flag_winner =:value and us.username = :valuename ",Game.class)
