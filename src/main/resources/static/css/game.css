@@ -29,3 +29,11 @@
 	display : inline-block;
 	vertical-align: middle;
 }
+
+.eatablePawn{
+	box-shadow : red 0px 0px 1px 10px;
+}
+
+.movable{
+	background : red;
+}

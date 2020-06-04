@@ -9,9 +9,11 @@
 	<div th:fragment="content" class="container-fluid">
 		<div class="row justify-content-md-center d-flex">
 			<div class="col col-md-auto">
+				
+				<h3 class="text-center"> <i class="fas fa-user"></i><th:block th:text=${opponent.username}>Adversaire</th:block></h3>
+				
 				<div id="header" class="d-flex justify-content-between">
 					<span id="bombSpan" >000</span>
-					<span id="reactionSpan">🙂</span>
 					<span id="timeSpan">00:00</span>
 				</div>
 				
@@ -24,14 +26,16 @@
 							<a th:if="${!piece.isEmpty() or pieceInSelection!=null}" 
 							th:class="${  piece.isEmpty()? 'clickableEmpty' : 
 								( (pieceInSelection!=null and pieceInSelection.getCoord().equals(x,y)) ? 'selectedPiece' :
-								(piece.color==0? 'clickablePawn' : 'adversePawn') )  }" 
+								(piece.color==0? 'clickablePawn' : 'adversePawn') )  }"
 								style="width: 100%; height: 100%; display: block; text-decoration: none" href="#" th:onclick="actionCase([[${x}]],[[${y}]])">
 								
-									<img class="p-1 py-2" th:unless="${piece.isEmpty()}" th:alt="${piece.type}" th:src='${"/assets/chess_icons/"+ (piece.color==0? "white" : "black") +"/"+piece.type+".svg"}'>
+									<img class="p-1 py-2" style="z-index: 1;" th:unless="${piece.isEmpty()}" th:alt="${piece.type}" th:src='${"/assets/chess_icons/"+ (piece.color==0? "white" : "black") +"/"+piece.type+".svg"}'>
 									<!-- Movement helpers -->
-									<th:block th:if="${piece.isEmpty() and pieceInSelection!=null and moves !=null}">
+									<th:block th:if="${pieceInSelection!=null and moves !=null}">
 										<th:block th:each="move : ${moves}">
-											<img th:if="${move.equals(x,y)}" class="dotHelper" th:src="@{/assets/chess_icons/dot.svg}" width="32">
+											<th:block th:if="${move.equals(x,y)}" >
+												<img class="dotHelper" th:if="${piece.isEmpty()}" th:src="@{/assets/chess_icons/dot.svg}" width="32">
+											</th:block>
 										</th:block>
 									</th:block>
 							</a>
@@ -39,11 +43,17 @@
 						</tr>
 					  </tbody>
 				</table>
+				
+				<h3 class="mt-3 text-center"> <i class="fas fa-user"></i> <th:block th:text=${myself.username}>Moi</th:block></h3>
+				
 			</div>
 		</div>
 		<br>
 		<div class="text-center" >
 			<!-- Infos -->
+			
+			<h4 th:if="${board.turn == 0}" th:text="${'Au tour de ' + myself.username +' !'}">Au tour de bidule</h4>
+			<h4 th:if="${board.turn == 1}" th:text="${'Au tour de ' + opponent.username +' !'}">Au tour de truc</h4>
 			<!--
 			<p th:text="'Nombre de cases : ' + ${board.getNombreCases()}">Nombre de cases : 0 </p>
 			<p th:text="'Nombre de mines : ' + ${board.getNbMine()}">Nombre de cases : 0 </p>
@@ -51,9 +61,8 @@
 			<p th:if="${board.lost == false}" th:text="'Probabilité de ne pas tomber sur une mine : ' + ${board.retourneChance()} +'%'">Chance de victoires : 0 </p>
 			-->
 			<a class="btn btn-primary" href="#" th:href="@{/game/reset}">Reinitialiser</a>
-			<a th:if="${board.result < 0}" th:href="@{|/gamemode/list|}" class="btn btn-secondary">Modes de jeux</a>
 			<a th:if="${board.result < 0}" th:href="@{|/|}" class="btn btn-info">Accueil</a>
-			<a th:unless="${board.result < 0}" th:href="@{|/saveGame|}" class="btn btn-info">Sauver ma progression</a>
+			<a th:if="${board.result < 0}" th:href="@{/game/save}" class="btn btn-primary">Sauvegarde</a>
 		</div>
 			
 		<div id="overlay" th:if="${board.result >= 0}" class="overlay mx-auto text-center" >

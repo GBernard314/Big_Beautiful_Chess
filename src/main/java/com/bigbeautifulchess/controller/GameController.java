@@ -33,6 +33,9 @@ public class GameController {
 	private Piece selectedPiece;
 	private int myColor = 0;
 	
+	private User myself;
+	private User opponent;
+	
 	@Autowired
 	UserRepository userRepository;
 	
@@ -43,33 +46,43 @@ public class GameController {
 	EntityManager em;
 	
 	
-	@GetMapping("/new")
-	public String initGameRepo(){
+	@GetMapping("/new/{adversaire}")
+	public String initGame(Model model, Authentication authentication, @PathVariable String adversaire){
 		List <User> users = new ArrayList<>();
-		User user1 = userRepository.findByUsername("test");
-		User user2 = userRepository.findByUsername("coco");
-        System.out.println(user1.getUsername());
-        System.out.println(user2.getUsername());
+		myself = userRepository.findByUsername("test");
+		opponent = userRepository.findByUsername(adversaire);
+        System.out.println(myself.getUsername());
+        System.out.println(opponent.getUsername());
 
-		users.add(user1);
-		users.add(user2);
+		
+		return "redirect:/game/reset";
+	}
+	
+	@GetMapping("/save")
+	public String saveGameRepo(){
+		List <User> users = new ArrayList<>();
+
+		users.add(myself);
+		users.add(opponent);
 		
 		Game game = new Game();
-		game.setFlag_winner(-1);
-		game.setBoard_info("1,4;5,6/3,2;6,2");
-		game.setForfeit(false);
-		game.setNb_turn(5);
-		game.setTime_user1(200);
-		game.setTime_user2(600);
+		game.setFlag_winner(b.getResult());
+		game.setBoard_info(b.cellsToString());
+		game.setForfeit(false); //TODO : forfait
+		game.setNb_turn(5); //TODO : nbTurn
+		game.setTime_user1(b.getTime_white());
+		game.setTime_user2(b.getTime_black());
 		game.setUsers(users);
-		game.setStorage("10");
-		game.setMouv("feziufhezf");
+		game.setStorage(b.storageToString());
+		game.setMouv("feziufhezf"); //TODO : c'est quoi ?
 		
 		gameRepository.save(game);
 		
+		myself = null;
+		opponent = null;
+		
 		return "redirect:/";
 	}
-	
 
 	private List<Game> getGames(String username, Boolean ongoing) {
 		int finishedParam;
@@ -160,6 +173,10 @@ public class GameController {
 
 		model.addAttribute("userInfo", user);
 		model.addAttribute("friends", userlist);
+		if(myself != null )
+			model.addAttribute("myself",myself);
+		if(opponent != null)
+			model.addAttribute("opponent",opponent);
 		
 		return "play";
 	}
