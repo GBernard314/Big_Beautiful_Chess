@@ -2,15 +2,20 @@ package com.bigbeautifulchess;
 
 import java.util.ArrayList;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import com.bigbeautifulchess.engine.Board;
 import com.bigbeautifulchess.engine.Piece;
 import com.bigbeautifulchess.tools.Coord;
 
+@SpringBootApplication
 public class BigbeautifulchessApplication {
 
 	public static void main(String[] args) {
 
 		System.out.println("Main 2 started\n");
+		SpringApplication.run(BigbeautifulchessApplication.class, args);
 		
 		//ArrayList of coordinates to remove
 		ArrayList<Coord> removed = new ArrayList<Coord>();
