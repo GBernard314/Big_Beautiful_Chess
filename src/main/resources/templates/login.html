@@ -5,16 +5,15 @@
 <title th:fragment="title">Authentification</title>
 </head>
 <body>
-	<div class="main-wrapper" th:fragment="body">
+	<div class="main-wrapper" th:fragment="body" style="background: url(../assets/images/chess_bg.jpg) no-repeat center center; background-size: cover;">
 		<div
-			class="auth-wrapper d-flex no-block justify-content-center align-items-center"
-			style="background: url(../assets/images/big/auth-bg.jpg) no-repeat center center;">
+			class="auth-wrapper d-flex no-block justify-content-center align-items-center" >
 			<div class="auth-box">
 				<div id="loginform">
 					<div class="logo">
 						<span class="db"><img
 							src="../assets/images/logo-icon.png" alt="logo" /></span>
-						<h5 class="font-medium m-b-20">Sign In to Admin</h5>
+						<h5 class="font-medium m-b-20">BBC | Connexion</h5>
 					</div>
 					<!-- Form -->
 					<div class="row">
@@ -40,36 +39,10 @@
 										aria-describedby="basic-addon1"
 										type="password" id="password" name="password" autocomplete="off">
 								</div>
-								<div class="form-group row">
-									<div class="col-md-12">
-										<div class="custom-control custom-checkbox">
-											<input type="checkbox" class="custom-control-input" id="customCheck1">
-											 <label class="custom-control-label" for="customCheck1">Remember me</label>
-											 	<a href="javascript:void(0)" id="to-recover" class="text-dark float-right">
-												 	<i class="fa fa-lock m-r-5"></i> 
-												 	Forgot pwd?
-											 	</a>
-										</div>
-									</div>
-								</div>
+								
 								<div class="form-group text-center">
 									<div class="col-xs-12 p-b-20">
 										<button class="btn btn-block btn-lg btn-info" type="submit">Connexion</button>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-xs-12 col-sm-12 col-md-12 m-t-10 text-center">
-										<div class="social">
-											<a href="javascript:void(0)" class="btn  btn-facebook"
-												data-toggle="tooltip" title=""
-												data-original-title="Login with Facebook"> <i
-												aria-hidden="true" class="fab  fa-facebook"></i>
-											</a> <a href="javascript:void(0)" class="btn btn-googleplus"
-												data-toggle="tooltip" title=""
-												data-original-title="Login with Google"> <i
-												aria-hidden="true" class="fab  fa-google-plus"></i>
-											</a>
-										</div>
 									</div>
 								</div>
 								<div class="form-group m-b-0 m-t-10">

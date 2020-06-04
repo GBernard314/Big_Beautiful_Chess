@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.bigbeautifulchess.engine.Board;
+import com.bigbeautifulchess.tools.Coord;
 
 @Controller
 
@@ -42,6 +43,18 @@ public class PlayController {
 		b.printBoardSimple();
 		
 		return "redirect:/play";
+	}
+	
+	@GetMapping({"/play/move-{x},{y}"})
+	public String move( Model model ,@PathVariable(required=true) int x, @PathVariable(required=true) int y) {
+		if(b == null) {
+			return "redirect:/reset";
+		}
+		Coord c = new Coord(x,y);
+		b.getCells()[0][0].setC(c);
+		
+		model.addAttribute("board", b);
+		return "play";
 	}
 	
 	/*
