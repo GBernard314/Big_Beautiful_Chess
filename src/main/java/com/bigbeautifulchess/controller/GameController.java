@@ -3,6 +3,7 @@ package com.bigbeautifulchess.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -48,14 +49,36 @@ public class GameController {
 	
 	@GetMapping("/new/{adversaire}")
 	public String initGame(Model model, Authentication authentication, @PathVariable String adversaire){
-		List <User> users = new ArrayList<>();
 		myself = userRepository.findByUsername(authentication.getName());
 		opponent = userRepository.findByUsername(adversaire);
         System.out.println(myself.getUsername());
         System.out.println(opponent.getUsername());
-
 		
 		return "redirect:/game/reset";
+	}
+	
+	@GetMapping("/load/{gameid}")
+	public String loadGame(Model model, Authentication authentication, @PathVariable Long gameid){
+		Optional<Game> probableGame = gameRepository.findById(gameid);
+		if(probableGame.isPresent()) {
+			//Partie identifiée
+			Game g = probableGame.get();
+			//Board(String bdd, int turn, int result, int time_black, int time_white, String storage, String historic)
+			b = new Board(g.getBoard_info(), g.getNb_turn()%2, g.getFlag_winner(), g.getTime_user2(), g.getTime_user1(), g.getStorage(), g.getMouv());
+			List<User> usrs = g.getUsers();
+			if(usrs.size() == 2) {
+				myself = usrs.get(0);
+				opponent = usrs.get(1);
+			}
+		}
+		else {
+			//Erreur : partie non identifiée
+			return "redirect:/";
+		}
+		myself = userRepository.findByUsername(authentication.getName());
+		//opponent = userRepository.findByUsername(adversaire); //TODO : opponent name
+		
+		return "redirect:/";
 	}
 	
 	@GetMapping("/save")
@@ -66,6 +89,8 @@ public class GameController {
 		users.add(opponent);
 		
 		Game game = new Game();
+		game.setId(null);
+		game.setUsers(users);
 		game.setFlag_winner(b.getResult());
 		game.setBoard_info(b.cellsToString());
 		game.setForfeit(false); //TODO : forfait
@@ -77,10 +102,6 @@ public class GameController {
 		game.setMouv(b.historicToString());
 		
 		gameRepository.save(game);
-		
-		myself = null;
-		opponent = null;
-		nbTours=0;
 		
 		return "redirect:/";
 	}

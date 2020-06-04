@@ -19,7 +19,7 @@ public class Game {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	protected Long Id;
 	
-	@OneToMany(cascade=CascadeType.ALL)
+	@OneToMany
 	protected List<User> users = new ArrayList<>();
 	
 	@Column
