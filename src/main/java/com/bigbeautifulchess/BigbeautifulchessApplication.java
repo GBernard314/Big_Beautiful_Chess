@@ -12,6 +12,20 @@ public class BigbeautifulchessApplication {
 
 		System.out.println("Main 2 started\n");
 		
+		Board game = new Board(false);
+		
+		game.getCells()[3][3] = new Piece(3, 3, 0, 'q', false);
+		game.getCells()[4][4] = new Piece(4, 4, 1, 'p', false);
+		game.getCells()[2][2] = new Piece(2, 2, 0, 'p', false);
+		game.getCells()[3][2] = new Piece(2, 2, 0, 'p', false);
+		game.updateMoves();
+		game.printBoardSimple();
+		game.printMovements(game.getPieceOnCell(3, 3));
+		game.eat(game.getPieceOnCell(4, 4), game.getPieceOnCell(5, 4));
+		game.printBoardSimple();
+		game.printMovements(game.getPieceOnCell(3, 3));
+		/*
+		
 		//ArrayList of coordinates to remove
 		ArrayList<Coord> removed = new ArrayList<Coord>();
 		
@@ -93,6 +107,7 @@ public class BigbeautifulchessApplication {
 		
 		//Debug
 		//new Table().printTabCanvas();
+		
 		
 		System.out.println("\nMain finished");
 	}
