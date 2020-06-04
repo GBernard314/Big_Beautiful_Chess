@@ -1517,6 +1517,7 @@ public class Board {
 		this.setHistoric(temp);
 		this.setCells(this.getCells());
 		hunter.setMoved(true);
+		promotion();
 		updateMoves();
 	}
 
