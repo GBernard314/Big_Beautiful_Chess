@@ -3,17 +3,17 @@
 	th:replace="~{layout :: layout(~{::title}, ~{::content}, ~{::customScript})}"
 	xmlns:th="http://www.thymeleaf.org">
 <head>
-<title th:fragment="title">Index</title>
+<title th:fragment="title" th:text="${label}">Index</title>
 </head>
 <div th:fragment="content" class="container-fluid">
 		<div class="row">
 			<div class="col-lg-12">
 				<div class="card" style="height: calc(100% - 20px)">
 					<div class="card-body">
-						<h4 class="card-title">Mes parties</h4>
+						<h4 th:text="${label}" class="card-title">Mes parties</h4>
 						<div class="table-responsive">
 							<table class="table">
-								<thead class="bg-success text-white">
+								<thead class="bg-primary text-white">
 									<tr>
 										<th>#</th>
 										<th>Adversaire</th>
@@ -42,7 +42,7 @@
 							</table>
 						</div>
 						<a th:href="@{/games/history}" class="btn btn-secondary">Historique</a>
-						<a th:href="@{/games/ongoing}" class="btn btn-secondary">Autres parties en cours</a>
+						<a th:href="@{/games/ongoing}" class="btn btn-secondary">Parties en cours</a>
 					</div>
 				</div>
 			</div>
