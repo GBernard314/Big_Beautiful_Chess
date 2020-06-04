@@ -17,7 +17,7 @@ public class Board {
 
 	/**
 	 * 0 or 1 for each player's turn
-	 */
+	 */	
 	private int turn;
 
 	/**

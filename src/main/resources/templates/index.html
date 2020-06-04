@@ -113,9 +113,9 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr>
+									<tr th:each="game : ${onGoingGames}">
 										<td>1</td>
-										<td>Max</td>
+										<td th:text="${game.getUsers()[0].username}">Max</td>
 										<td>26:12</td>
 										<td>
 											<div class="btn-group float-right" role="group"
@@ -127,34 +127,7 @@
 											</div>
 										</td>
 									</tr>
-									<tr>
-										<td>2</td>
-										<td>Chess man</td>
-										<td>02:13</td>
-										<td>
-											<div class="btn-group float-right" role="group"
-												aria-label="Button group with nested dropdown">
-												<a href="#" class="btn btn-success"><i
-													class="mdi mdi-eye"></i></a> <a href="#" class="btn btn-info"><i
-													class="fas fa-chess"></i></a> <a href="#" class="btn btn-light"><i
-													class="mdi mdi-eraser"></i></a>
-											</div>
-										</td>
-									</tr>
-									<tr>
-										<td>-</td>
-										<td>-</td>
-										<td>-</td>
-										<td>
-											<div class="btn-group float-right" role="group"
-												aria-label="Button group with nested dropdown">
-												<a href="#" class="btn btn-success"><i
-													class="mdi mdi-eye"></i></a> <a href="#" class="btn btn-info"><i
-													class="fas fa-chess"></i></a> <a href="#" class="btn btn-light"><i
-													class="mdi mdi-eraser"></i></a>
-											</div>
-										</td>
-									</tr>
+									
 
 								</tbody>
 							</table>
