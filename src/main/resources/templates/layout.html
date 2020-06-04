@@ -3,7 +3,6 @@
     th:fragment="layout(title, content, customScript)"
     th:replace="~{emptylayout :: emptylayout(~{::title}, ~{::body}, ~{::customScript})}"
 >
-    <body>
         <div th:fragment="body">
             <div id="main-wrapper">
                 <!-- Topbar header -->
@@ -38,6 +37,5 @@
             
             <div class="chat-windows"></div>
         </div>
-    </body>
 
 </html>

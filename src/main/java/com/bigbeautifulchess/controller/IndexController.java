@@ -43,16 +43,11 @@ public class IndexController {
 
 	@GetMapping("/")
 	public String welcome(Model model, Authentication authentication) {
-
 		User user = userRepository.findByUsername(authentication.getName());
-		List<Game> finishedGame = em.createQuery("select g from Game g JOIN g.users us where g.flag_winner !=:value and us.username = :valuename ",Game.class)
-				.setParameter("value", -1)
-				.setParameter("valuename", authentication.getName())
-				.getResultList();
-
-		List <Game> onGoingGame = em.createQuery("select g from Game g JOIN g.users us where g.flag_winner =:value and us.username = :valuename ",Game.class)
+		List <Game> onGoingGame = em.createQuery("select g from Game g JOIN g.users us where g.flag_winner =:value and us.username = :valuename order by nb_turn DESC",Game.class)
 			.setParameter("value", -1)
 			.setParameter("valuename", authentication.getName())
+			.setMaxResults(5)
 			.getResultList();
 		
 		List<User> userlist = new ArrayList<>();
@@ -66,9 +61,11 @@ public class IndexController {
 				  userlist.add(u.get(0));
 			  }
 		  }
-		  
+		int gameCount = (int) gameRepository.count();
+		
+		model.addAttribute("onGoingGames-count", gameCount);
+		model.addAttribute("userInfo", user);
 		model.addAttribute("friends", userlist);
-		model.addAttribute("finishedGames", finishedGame);
 		model.addAttribute("onGoingGames", onGoingGame);
 		
 		return "index";
