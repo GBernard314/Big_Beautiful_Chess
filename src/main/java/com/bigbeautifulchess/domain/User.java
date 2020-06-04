@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -18,6 +19,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Table(name="users")
 public class User implements UserDetails {
 	private static final long serialVersionUID = -2963008589618789228L;
+	
+	public User(String name) {
+		this.username = name;
+	}
+	
+	public User() {
+		
+	}
 	
 	@Id @Column
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -35,7 +44,7 @@ public class User implements UserDetails {
 
 	@ManyToMany(fetch=FetchType.EAGER)
 	private Collection<Authority> authorities;
-
+	
 	@Override
 	public boolean isAccountNonExpired() {
 		return true;

@@ -5,7 +5,7 @@
     <body>
         <div th:fragment="content">
             <form name="f" th:action="@{/login}" method="post">
-                <fieldset>
+                
                     <legend>Authentification</legend>
                     <div th:if="${param.error}" class="alert alert-error">
                         L'identifiant et le mot de passe sont invalides
@@ -21,7 +21,7 @@
                     <div class="form-actions">
                         <button type="submit" class="btn">Connexion</button>
                     </div>
-                </fieldset>
+                
             </form>
             <a th:href="@{/register}" href="#">Pas encore inscrit?</a></li>
         </div>
