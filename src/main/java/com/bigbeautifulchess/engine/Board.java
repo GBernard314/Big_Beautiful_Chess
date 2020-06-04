@@ -90,29 +90,29 @@ public class Board {
 			}
 		}
 		// Black pieces
-		c[0][0] = new Piece(0, 0, 1, 'r');
-		c[0][1] = new Piece(0, 1, 1, 'h');
-		c[0][2] = new Piece(0, 2, 1, 'b');
-		c[0][3] = new Piece(0, 3, 1, 'q');
-		c[0][4] = new Piece(0, 4, 1, 'k');
-		c[0][5] = new Piece(0, 5, 1, 'b');
-		c[0][6] = new Piece(0, 6, 1, 'h');
-		c[0][7] = new Piece(0, 7, 1, 'r');
+		c[0][0] = new Piece(0, 0, 1, 'r', false);
+		c[0][1] = new Piece(0, 1, 1, 'h', false);
+		c[0][2] = new Piece(0, 2, 1, 'b', false);
+		c[0][3] = new Piece(0, 3, 1, 'q', false);
+		c[0][4] = new Piece(0, 4, 1, 'k', false);
+		c[0][5] = new Piece(0, 5, 1, 'b', false);
+		c[0][6] = new Piece(0, 6, 1, 'h', false);
+		c[0][7] = new Piece(0, 7, 1, 'r', false);
 		for (int i = 0; i <= 7; i++) {
-			c[1][i] = new Piece(1, i, 1, 'p');
+			c[1][i] = new Piece(1, i, 1, 'p', false);
 		}
 
 		// White pieces
-		c[7][0] = new Piece(7, 0, 0, 'r');
-		c[7][1] = new Piece(7, 1, 0, 'h');
-		c[7][2] = new Piece(7, 2, 0, 'b');
-		c[7][3] = new Piece(7, 3, 0, 'q');
-		c[7][4] = new Piece(7, 4, 0, 'k');
-		c[7][5] = new Piece(7, 5, 0, 'b');
-		c[7][6] = new Piece(7, 6, 0, 'h');
-		c[7][7] = new Piece(7, 7, 0, 'r');
+		c[7][0] = new Piece(7, 0, 0, 'r', false);
+		c[7][1] = new Piece(7, 1, 0, 'h', false);
+		c[7][2] = new Piece(7, 2, 0, 'b', false);
+		c[7][3] = new Piece(7, 3, 0, 'q', false);
+		c[7][4] = new Piece(7, 4, 0, 'k', false);
+		c[7][5] = new Piece(7, 5, 0, 'b', false);
+		c[7][6] = new Piece(7, 6, 0, 'h', false);
+		c[7][7] = new Piece(7, 7, 0, 'r', false);
 		for (int i = 0; i <= 7; i++) {
-			c[6][i] = new Piece(6, i, 0, 'p');
+			c[6][i] = new Piece(6, i, 0, 'p', false);
 		}
 		this.cells = c;
 		this.turn = 0;
@@ -232,7 +232,11 @@ public class Board {
 		this.time_black = time_black;
 		this.time_white = time_white;
 		this.historic = h;
-		this.storage = new TimeStamp(Integer.parseInt(storage.split(":")[0]), Integer.parseInt(storage.split(":")[1]), Integer.parseInt(storage.split(":")[2]));
+		if (this.storage == null) {
+			this.storage = new TimeStamp();
+		} else {
+			this.storage = new TimeStamp(Integer.parseInt(storage.split(":")[0]), Integer.parseInt(storage.split(":")[1]), Integer.parseInt(storage.split(":")[2]));
+		}
 	}
 
 
@@ -514,8 +518,9 @@ public class Board {
 				int y = getCells()[i][j].getC().getY();
 				int color = getCells()[i][j].getColor();
 				char type = getCells()[i][j].getType();
+				boolean moved = getCells()[i][j].getMoved();
 
-				cells[i][j] = new Piece(x, y, color, type);
+				cells[i][j] = new Piece(x, y, color, type, moved);
 			}
 		}
 		copy.setCells(cells);
@@ -786,7 +791,7 @@ public class Board {
 			int y = king_final_moves.get(i).getY();
 			simulation.getCells()[king.getC().getX()][king.getC().getY()] = new Piece(king.getC().getX(),
 					king.getC().getY());
-			simulation.getCells()[x][y] = new Piece(x, y, this.getTurn(), 'k');
+			simulation.getCells()[x][y] = new Piece(x, y, this.getTurn(), 'k', true);
 			if (simulation.isChecked()) {
 				impossible_moves.add(new Coord(x, y));
 			}
@@ -816,6 +821,10 @@ public class Board {
 			}
 		}
 
+
+		int px = pawn.getC().getX();
+		int py = pawn.getC().getY();
+		
 		// We verify if the destination cells contains a piece
 		for (int i = 0; i < pawn.getMoves().size(); i++) {
 			int x = pawn.getMoves().get(i).getX();
@@ -829,14 +838,17 @@ public class Board {
 				impossible_moves.add(c);
 				removed++;
 			}
-			// if the opponent is in front, we remove every move
-			if (removed == 1) {
-				impossible_moves.add(c);
+			// if there is a piece directly in front we remove every move
+			if (pawn.getColor() == 0) {
+				if (getPieceOnCell(px-1, py).getType() != 'e') {
+					pawn_final_moves.clear();
+				}
+			} else {
+				if (getPieceOnCell(px+1, py).getType() != 'e') {
+					pawn_final_moves.clear();
+				}
 			}
 		}
-
-		int px = pawn.getC().getX();
-		int py = pawn.getC().getY();
 
 		// We check for diagonal eating-moves
 		// if it's white
@@ -1269,8 +1281,8 @@ public class Board {
 		// Then if the player is going to be check after castling
 		// we get the soon-to-be king coordinates
 
-		Piece soon_to_be_king = new Piece(-1, -1, this.getTurn(), 'k');
-		Piece soon_to_be_rook = new Piece(-1, -1, this.getTurn(), 'r');
+		Piece soon_to_be_king = new Piece(-1, -1, this.getTurn(), 'k', true);
+		Piece soon_to_be_rook = new Piece(-1, -1, this.getTurn(), 'r', true);
 		soon_to_be_king.setC(new Coord(king.getC().getX(), king.getC().getY() - 2));
 		soon_to_be_rook.setC(new Coord(big_rook.getC().getX(), big_rook.getC().getY() + 3));
 
@@ -1284,10 +1296,10 @@ public class Board {
 
 		// we put the king in the future cell
 		simulation.cells[soon_to_be_king.getC().getX()][soon_to_be_king.getC().getY()] = new Piece(
-				soon_to_be_king.getC().getX(), soon_to_be_king.getC().getY(), this.getTurn(), 'k');
+				soon_to_be_king.getC().getX(), soon_to_be_king.getC().getY(), this.getTurn(), 'k', true);
 		// and the rook
 		simulation.cells[soon_to_be_rook.getC().getX()][soon_to_be_rook.getC().getY()] = new Piece(
-				soon_to_be_rook.getC().getX(), soon_to_be_rook.getC().getY(), this.getTurn(), 'r');
+				soon_to_be_rook.getC().getX(), soon_to_be_rook.getC().getY(), this.getTurn(), 'r', true);
 
 		if (simulation.isChecked()) {
 			return false;
@@ -1346,8 +1358,8 @@ public class Board {
 		// Then if the player is going to be check after castling
 		// we get the soon-to-be king coordinates
 
-		Piece soon_to_be_king = new Piece(-1, -1, this.getTurn(), 'k');
-		Piece soon_to_be_rook = new Piece(-1, -1, this.getTurn(), 'r');
+		Piece soon_to_be_king = new Piece(-1, -1, this.getTurn(), 'k', true);
+		Piece soon_to_be_rook = new Piece(-1, -1, this.getTurn(), 'r', true);
 
 		soon_to_be_king.setC(new Coord(king.getC().getX(), king.getC().getY() + 2));
 		soon_to_be_rook.setC(new Coord(small_rook.getC().getX(), small_rook.getC().getY() - 2));
@@ -1362,10 +1374,10 @@ public class Board {
 
 		// we put the king in the future cell
 		simulation.cells[soon_to_be_king.getC().getX()][soon_to_be_king.getC().getY()] = new Piece(
-				soon_to_be_king.getC().getX(), soon_to_be_king.getC().getY(), this.getTurn(), 'k');
+				soon_to_be_king.getC().getX(), soon_to_be_king.getC().getY(), this.getTurn(), 'k', true);
 		// and the rook
 		simulation.cells[soon_to_be_rook.getC().getX()][soon_to_be_rook.getC().getY()] = new Piece(
-				soon_to_be_rook.getC().getX(), soon_to_be_rook.getC().getY(), this.getTurn(), 'r');
+				soon_to_be_rook.getC().getX(), soon_to_be_rook.getC().getY(), this.getTurn(), 'r', true);
 
 		if (simulation.isChecked()) {
 			// System.out.println("will be checked");
@@ -1462,7 +1474,7 @@ public class Board {
 		this.getCells()[hunter_x][hunter_y] = new Piece(hunter_x, hunter_y);
 
 		// in the hunted cell we put the hunter
-		this.getCells()[hunted_x][hunted_y] = new Piece(hunted_x, hunted_y, hunter.getColor(), hunter.getType());
+		this.getCells()[hunted_x][hunted_y] = new Piece(hunted_x, hunted_y, hunter.getColor(), hunter.getType(), true);
 
 		// Todo
 		// How do we manage time ?
@@ -1528,7 +1540,7 @@ public class Board {
 		// in the hunter cell we put nothing
 		simulation.getCells()[hunter_x][hunter_y] = new Piece(hunter_x, hunter_y);
 		// in the hunted cell we put the hunter
-		simulation.getCells()[hunted_x][hunted_y] = new Piece(hunted_x, hunted_y, hunter.getColor(), hunter.getType());
+		simulation.getCells()[hunted_x][hunted_y] = new Piece(hunted_x, hunted_y, hunter.getColor(), hunter.getType(), true);
 		simulation.updateMoves();
 		if (simulation.isChecked()) {
 			return false;

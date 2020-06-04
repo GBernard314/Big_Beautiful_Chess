@@ -50,24 +50,6 @@ public class Piece {
 	 * Simple flag to determine if the piece moved at least once
 	 */
 	private boolean moved;
-
-	/**
-	 * It is used to create a piece
-	 * 
-	 * @param x     coordinate on the board
-	 * @param y     coordinate on the board
-	 * @param color of the piece
-	 * @param type  of the piece
-	 */
-	public Piece(int x, int y, int color, char type) {
-		super();
-		this.coord = new Coord(x, y);
-		this.color = color;
-		this.type = type;
-		this.theoretical_moves = moves();
-		this.moves = moves();
-		this.moved = false;
-	}
 	
 	/**
 	 * Used to create a piece
@@ -323,7 +305,7 @@ public class Piece {
 			}
 			// else only 1 cell
 			else {
-				pawn_moves.add(new Coord(x-1, y));
+				pawn_moves.add(new Coord(x - 1, y));
 			}
 		}
 		// else he only goes down
