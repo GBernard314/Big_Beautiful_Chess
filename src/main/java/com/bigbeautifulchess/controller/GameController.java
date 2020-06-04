@@ -69,14 +69,24 @@ public class GameController {
 			if(usrs.size() == 2) {
 				myself = usrs.get(0);
 				opponent = usrs.get(1);
+				return "redirect:/game/play";
 			}
+			
 		}
 		else {
 			//Erreur : partie non identifiée
 			return "redirect:/";
 		}
-		myself = userRepository.findByUsername(authentication.getName());
-		//opponent = userRepository.findByUsername(adversaire); //TODO : opponent name
+		
+		return "redirect:/";
+	}
+	
+	@GetMapping("/drop/{gameid}")
+	public String dropGame(Model model, Authentication authentication, @PathVariable Long gameid){
+		Optional<Game> probableGame = gameRepository.findById(gameid);
+		if(probableGame.isPresent()) {
+			gameRepository.deleteById(gameid);
+		}
 		
 		return "redirect:/";
 	}
