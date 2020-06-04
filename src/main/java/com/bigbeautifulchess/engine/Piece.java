@@ -158,6 +158,7 @@ public class Piece {
 
 	public void setMoved(boolean moved) {
 		this.moved = moved;
+		System.out.println("moved set to "+ moved);
 	}
 
 	
@@ -310,18 +311,19 @@ public class Piece {
 	 */
 	public ArrayList<Coord> pawnMoves() {
 		ArrayList<Coord> pawn_moves = new ArrayList<Coord>();
-		int x = this.getC().getX();
-		int y = this.getC().getY();
+		Coord myself = getC();
+		int x = myself.getX();
+		int y = myself.getY();
 		// if the pawn is white he can go up
 		if (getColor() == 0) {
 			// if the pawn never moved it can move 2 cells
-			if (!getMoved()) {
-				pawn_moves.add(new Coord(y - 1, x));
-				pawn_moves.add(new Coord(y - 2, x));
+			if (!this.getMoved()) {
+				pawn_moves.add(new Coord(x - 1, y));
+				pawn_moves.add(new Coord(x - 2, y));
 			}
 			// else only 1 cell
 			else {
-				pawn_moves.add(new Coord(x, y-1));
+				pawn_moves.add(new Coord(x-1, y));
 			}
 		}
 		// else he only goes down

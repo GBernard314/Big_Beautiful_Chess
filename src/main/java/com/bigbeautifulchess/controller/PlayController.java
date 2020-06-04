@@ -64,6 +64,8 @@ public class PlayController {
 			if(clickedCell.getColor() == myColor) {
 				selectedPiece = b.getPieceOnCell(x,y);
 				selectedPiece.printPiece();
+
+				System.out.println(selectedPiece.getMoved());
 			}
 		}
 		else{ //Un pion est deja selectionné, on deplace ou mange
