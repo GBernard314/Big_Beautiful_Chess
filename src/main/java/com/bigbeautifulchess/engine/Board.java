@@ -1510,7 +1510,6 @@ public class Board {
 		temp.add(new Mov(hunter.getType(), hunter.getC(), hunted.getType(), hunted.getC()));
 		this.setHistoric(temp);
 		updateMoves();
-		hunter.setMoved(true);
 	}
 
 	/**

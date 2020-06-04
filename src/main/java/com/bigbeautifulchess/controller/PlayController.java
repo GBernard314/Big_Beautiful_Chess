@@ -33,7 +33,7 @@ public class PlayController {
 		if(b == null) {
 			return "redirect:/reset";
 		}
-		
+		System.out.println(b.getTurn());
 		model.addAttribute("board", b);
 		model.addAttribute("pieceInSelection", selectedPiece);
 		if(selectedPiece != null) {
@@ -61,11 +61,9 @@ public class PlayController {
 		}
 		Piece clickedCell = b.getPieceOnCell(x,y);
 		if(selectedPiece == null){ //Cas selection d'un pion
-			if(clickedCell.getColor() == myColor) {
+			if(true || clickedCell.getColor() == myColor) { //Debug : les deux couleurs sont jouables
 				selectedPiece = b.getPieceOnCell(x,y);
 				selectedPiece.printPiece();
-
-				System.out.println(selectedPiece.getMoved());
 			}
 		}
 		else{ //Un pion est deja selectionné, on deplace ou mange
