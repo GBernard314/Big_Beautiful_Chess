@@ -34,7 +34,7 @@ public class GameController {
 
 	@PersistenceContext
 	EntityManager em;
-
+	
 	
 	@GetMapping("/new")
 	public String initGameRepo(){
