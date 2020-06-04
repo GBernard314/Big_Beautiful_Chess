@@ -989,6 +989,8 @@ public class Board {
 			}
 		}
 
+		System.out.println("obstacle in x = " + xmin);
+		System.out.println("MAX = "+ xmax + ";" + ymax + "   min = " + xmin + ";"+ ymin);
 		// Now we keep only the ones between xmin;ymin and xmam;ymax
 		for (int i = 0; i < rook_final_moves.size(); i++) {
 			int x = rook_final_moves.get(i).getX();
@@ -1011,7 +1013,6 @@ public class Board {
 			}
 		}
 		rook_final_moves.removeAll(impossible_moves);
-
 		rook.setMoves(rook_final_moves);
 	}
 
@@ -1451,7 +1452,6 @@ public class Board {
 	 * @param hunted the destination piece
 	 */
 	public void eat(Piece hunter, Piece hunted) {
-
 		int hunter_x = hunter.getC().getX();
 		int hunter_y = hunter.getC().getY();
 		int hunted_x = hunted.getC().getX();
@@ -1469,11 +1469,12 @@ public class Board {
 		}
 
 		// in the hunter cell we put nothing
-		this.getCells()[hunter_x][hunter_y] = new Piece(hunter_x, hunter_y);
+		this.getCells()[hunter_x][hunter_y] = new Piece(hunter_x, hunter_y, -1, 'e', false);
 
 		// in the hunted cell we put the hunter
 		this.getCells()[hunted_x][hunted_y] = new Piece(hunted_x, hunted_y, hunter.getColor(), hunter.getType(), true);
-
+		
+		
 		// Todo
 		// How do we manage time ?
 		// little trick to alternate between 1 and 0
@@ -1506,8 +1507,9 @@ public class Board {
 		ArrayList<Mov> temp = this.getHistoric();
 		temp.add(new Mov(hunter.getType(), hunter.getC(), hunted.getType(), hunted.getC()));
 		this.setHistoric(temp);
-		updateMoves();
+		this.setCells(this.getCells());
 		hunter.setMoved(true);
+		updateMoves();
 	}
 
 	/**
