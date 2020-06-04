@@ -40,15 +40,6 @@ public class Piece {
 	 * Simple flag to determine if the piece moved at least once
 	 */
 	private boolean moved;
-
-	/**
-	 * It is used to create a piece
-	 * 
-	 * @param x     coordinate on the board
-	 * @param y     coordinate on the board
-	 * @param color of the piece
-	 * @param type  of the piece
-	 */
 	
 	/**
 	 * Used to create a piece
