@@ -1,8 +1,15 @@
 package com.bigbeautifulchess.engine;
 
+import com.bigbeautifulchess.tools.*;
+import java.sql.Date;
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 
@@ -43,7 +50,7 @@ public class Board {
 	/**
 	 * We need to store a date in order to manage time
 	 */
-	private LocalDateTime storage;
+	private TimeStamp storage;
 
 	/**
 	 * We save every move made
@@ -52,7 +59,7 @@ public class Board {
 
 	/**
 	 * To have an empty board
-	 * 
+	 *
 	 * @param b
 	 */
 	public Board(boolean b) {
@@ -67,6 +74,7 @@ public class Board {
 		this.turn = 0;
 		this.result = -1;
 		this.historic = new ArrayList<Mov>();
+		this.storage = new TimeStamp();
 	}
 
 	/**
@@ -81,37 +89,348 @@ public class Board {
 			}
 		}
 		// Black pieces
-		c[0][0] = new Piece(0, 0, 1, 'r');
-		c[0][1] = new Piece(0, 1, 1, 'h');
-		c[0][2] = new Piece(0, 2, 1, 'b');
-		c[0][3] = new Piece(0, 3, 1, 'q');
-		c[0][4] = new Piece(0, 4, 1, 'k');
-		c[0][5] = new Piece(0, 5, 1, 'b');
-		c[0][6] = new Piece(0, 6, 1, 'h');
-		c[0][7] = new Piece(0, 7, 1, 'r');
+		c[0][0] = new Piece(0, 0, 1, 'r', false);
+		c[0][1] = new Piece(0, 1, 1, 'h', false);
+		c[0][2] = new Piece(0, 2, 1, 'b', false);
+		c[0][3] = new Piece(0, 3, 1, 'q', false);
+		c[0][4] = new Piece(0, 4, 1, 'k', false);
+		c[0][5] = new Piece(0, 5, 1, 'b', false);
+		c[0][6] = new Piece(0, 6, 1, 'h', false);
+		c[0][7] = new Piece(0, 7, 1, 'r', false);
 		for (int i = 0; i <= 7; i++) {
-			c[1][i] = new Piece(1, i, 1, 'p');
+			c[1][i] = new Piece(1, i, 1, 'p', false);
 		}
 
 		// White pieces
-		c[7][0] = new Piece(7, 0, 0, 'r');
-		c[7][1] = new Piece(7, 1, 0, 'h');
-		c[7][2] = new Piece(7, 2, 0, 'b');
-		c[7][3] = new Piece(7, 3, 0, 'q');
-		c[7][4] = new Piece(7, 4, 0, 'k');
-		c[7][5] = new Piece(7, 5, 0, 'b');
-		c[7][6] = new Piece(7, 6, 0, 'h');
-		c[7][7] = new Piece(7, 7, 0, 'r');
+		c[7][0] = new Piece(7, 0, 0, 'r', false);
+		c[7][1] = new Piece(7, 1, 0, 'h', false);
+		c[7][2] = new Piece(7, 2, 0, 'b', false);
+		c[7][3] = new Piece(7, 3, 0, 'q', false);
+		c[7][4] = new Piece(7, 4, 0, 'k', false);
+		c[7][5] = new Piece(7, 5, 0, 'b', false);
+		c[7][6] = new Piece(7, 6, 0, 'h', false);
+		c[7][7] = new Piece(7, 7, 0, 'r', false);
 		for (int i = 0; i <= 7; i++) {
-			c[6][i] = new Piece(6, i, 0, 'p');
+			c[6][i] = new Piece(6, i, 0, 'p', false);
 		}
 		this.cells = c;
 		this.turn = 0;
 		this.result = -1;
 		this.historic = new ArrayList<Mov>();
+		this.storage = new TimeStamp();
+	}
+
+	/**
+	 * To create instance of board with BDD data
+	 *
+	 * @param bdd
+	 * @param turn
+	 * @param result
+	 * @param time_black
+	 * @param time_white
+	 * @param storage
+	 * @param historic
+	 */
+	public Board(String bdd, int turn, int result, int time_black, int time_white, String storage,
+			String historic) {
+		super();
+		Piece[][] c = new Piece[8][8];
+		for (int i = 0; i < c.length; i++) {
+			for (int j = 0; j < c[i].length; j++) {
+				c[i][j] = new Piece(i, j);
+			}
+		}
+
+		// we split to have the different type of pieces
+		String[] types = bdd.split("\\|");
+		int nb_types = types.length;
+
+		// for each type we split to have the different colors
+		for (int i = 0; i < types.length; i++) {
+			String[] colors = types[i].split("\\/");
+			int nb_colors = colors.length;
+			// for each color we split to have the different pieces
+			for (int j = 0; j < colors.length; j++) {
+
+				String[] pieces = colors[j].split(";");
+				int nb_pieces = pieces.length;
+
+				// for each piece we split to have the x and y
+				for (int k = 0; k < nb_pieces; k++) {
+					String[] coords = pieces[k].split("\\,");
+
+					int x = Integer.parseInt(coords[0]);
+					int y = Integer.parseInt(coords[1]);
+
+					// boolean
+					boolean m = Integer.parseInt(coords[2]) >= 1 ? true : false;
+
+					int color = j;
+					switch (i) {
+					case 0:
+						c[x][y] = new Piece(x, y, color, 'p', m);
+						break;
+					case 1:
+						c[x][y] = new Piece(x, y, color, 'r', m);
+						break;
+					case 2:
+						c[x][y] = new Piece(x, y, color, 'h', m);
+						break;
+					case 3:
+						c[x][y] = new Piece(x, y, color, 'b', m);
+						break;
+					case 4:
+						c[x][y] = new Piece(x, y, color, 'q', m);
+						break;
+					case 5:
+						c[x][y] = new Piece(x, y, color, 'k', m);
+						break;
+
+					default:
+						c[x][y] = new Piece(x, y);
+						break;
+					}
+				}
+			}
+		}
+
+		ArrayList<Mov> h = new ArrayList<Mov>();
+
+		// we split to have every move done until now
+		String[] moves = historic.split(";");
+		int nb_moves = moves.length;
+
+		if (historic != "") {
+			// for each move we split to have from to
+			for (int i = 0; i < nb_moves; i++) {
+				String[] fromTo = moves[i].split("-");
+
+				// hunter data
+				String[] dataHunter = fromTo[0].split(":");
+				char hunter_type = dataHunter[0].charAt(0);
+
+				String[] coordHunter = dataHunter[1].split(",");
+				int x_hunter = Integer.parseInt(coordHunter[0]);
+				int y_hunter = Integer.parseInt(coordHunter[1]);
+
+				// hunted data
+				String[] dataHunted = fromTo[1].split(":");
+				char hunted_type = dataHunted[0].charAt(0);
+
+				String[] coordHunted = dataHunted[1].split(",");
+				int x_hunted = Integer.parseInt(coordHunted[0]);
+				int y_hunted = Integer.parseInt(coordHunted[1]);
+
+				h.add(new Mov(hunter_type, new Coord(x_hunter, y_hunter), hunted_type, new Coord(x_hunted, y_hunted)));
+			}
+		}
+
+		this.cells = c;
+		this.turn = turn;
+		this.result = result;
+		this.time_black = time_black;
+		this.time_white = time_white;
+		this.historic = h;
+		this.storage = new TimeStamp(Integer.parseInt(storage.split(":")[0]), Integer.parseInt(storage.split(":")[1]), Integer.parseInt(storage.split(":")[2]));
 
 	}
 
+
+	
+	/**
+	 * Serialize content of Cells[][] into String
+	 * @return String serialized
+	 */
+	public String cellsToString() {
+		Piece[][] c = this.getCells();
+
+		StringBuilder finalString = new StringBuilder();
+		StringBuilder pawnW = new StringBuilder();
+		StringBuilder pawnB = new StringBuilder();
+		StringBuilder rookW = new StringBuilder();
+		StringBuilder rookB = new StringBuilder();
+		StringBuilder horseW = new StringBuilder();
+		StringBuilder horseB = new StringBuilder();
+		StringBuilder bishopW = new StringBuilder();
+		StringBuilder bishopB = new StringBuilder();
+		StringBuilder queenW = new StringBuilder();
+		StringBuilder queenB = new StringBuilder();
+		StringBuilder kingW = new StringBuilder();
+		StringBuilder kingB = new StringBuilder();
+
+		for (int i = 0; i < c.length; i++) {
+			for (int j = 0; j < c[i].length; j++) {
+				int m = c[i][j].getMoved() == true ? 1: 0;
+				int color = c[i][j].getColor();
+				switch (c[i][j].getType()) {
+				case 'p':
+					if (color == 0) {
+						pawnW.append(i);
+						pawnW.append(",");
+						pawnW.append(j);
+						pawnW.append(",");
+						pawnW.append(m);
+						pawnW.append(";");
+					} else {
+						pawnB.append(i);
+						pawnB.append(",");
+						pawnB.append(j);
+						pawnB.append(",");
+						pawnB.append(m);
+						pawnB.append(";");
+					}
+					break;
+				case 'r':
+					if (color == 0) {
+						rookW.append(i);
+						rookW.append(",");
+						rookW.append(j);
+						rookW.append(",");
+						rookW.append(m);
+						rookW.append(";");
+					} else {
+						rookB.append(i);
+						rookB.append(",");
+						rookB.append(j);
+						rookB.append(",");
+						rookB.append(m);
+						rookB.append(";");
+					}
+					break;
+				case 'h':
+					if (color == 0) {
+						horseW.append(i);
+						horseW.append(",");
+						horseW.append(j);
+						horseW.append(",");
+						horseW.append(m);
+						horseW.append(";");
+					} else {
+						horseB.append(i);
+						horseB.append(",");
+						horseB.append(j);
+						horseB.append(",");
+						horseB.append(m);
+						horseB.append(";");
+					}
+					break;
+				case 'b':
+					if (color == 0) {
+						bishopW.append(i);
+						bishopW.append(",");
+						bishopW.append(j);
+						bishopW.append(",");
+						bishopW.append(m);
+						bishopW.append(";");
+					} else {
+						bishopB.append(i);
+						bishopB.append(",");
+						bishopB.append(j);
+						bishopB.append(",");
+						bishopB.append(m);
+						bishopB.append(";");
+					}
+					break;
+				case 'q':
+					if (color == 0) {
+						queenW.append(i);
+						queenW.append(",");
+						queenW.append(j);
+						queenW.append(",");
+						queenW.append(m);
+						queenW.append(";");
+					} else {
+						queenB.append(i);
+						queenB.append(",");
+						queenB.append(j);
+						queenB.append(",");
+						queenB.append(m);
+						queenB.append(";");
+					}
+					break;
+				case 'k':
+					if (color == 0) {
+						kingW.append(i);
+						kingW.append(",");
+						kingW.append(j);
+						kingW.append(",");
+						kingW.append(m);
+						kingW.append(";");
+					} else {
+						kingB.append(i);
+						kingB.append(",");
+						kingB.append(j);
+						kingB.append(",");
+						kingB.append(m);
+						kingB.append(";");
+					}
+					break;
+				}
+			}
+		}
+
+		finalString.append(pawnW);
+		finalString.append("/");
+		finalString.append(pawnB);
+		finalString.append("|");
+		finalString.append(rookW);
+		finalString.append("/");
+		finalString.append(rookB);
+		finalString.append("|");
+		finalString.append(horseW);
+		finalString.append("/");
+		finalString.append(horseB);
+		finalString.append("|");
+		finalString.append(bishopW);
+		finalString.append("/");
+		finalString.append(bishopB);
+		finalString.append("|");
+		finalString.append(queenW);
+		finalString.append("/");
+		finalString.append(queenB);
+		finalString.append("|");
+		finalString.append(kingW);
+		finalString.append("/");
+		finalString.append(kingB);
+		finalString.append("|");
+		
+		return finalString.toString();
+	}
+
+	/**
+	 * Serialize content of historic into String
+	 * @return String serialized
+	 */
+	public String historicToString() {
+		StringBuilder strBuilder = new StringBuilder();
+		for (int i = 0; i < this.getHistoric().size(); i++) {
+			Mov temp = this.getHistoric().get(i);
+			char ch1 = temp.getP1();
+			char ch2 = temp.getP2();
+			int x1 = temp.getFrom().getX();
+			int y1 = temp.getFrom().getY();
+			int x2 = temp.getTo().getX();
+			int y2 = temp.getTo().getY();
+			strBuilder.append(ch1);
+			strBuilder.append(":");
+			strBuilder.append(x1);
+			strBuilder.append(",");
+			strBuilder.append(y1);
+			strBuilder.append("-");
+			strBuilder.append(ch2);
+			strBuilder.append(":");
+			strBuilder.append(x2);
+			strBuilder.append(",");
+			strBuilder.append(y2);
+			strBuilder.append(";");
+		}
+		return strBuilder.toString();
+	}
+	
+	public String storageToString() {
+		return this.storage.toString();
+	}
+	
 	public Board(Piece[][] cells, int turn, int result) {
 		super();
 		this.cells = cells;
@@ -175,13 +494,13 @@ public class Board {
 	public void setTime_white(int time_white) {
 		this.time_white = time_white;
 	}
-
-	public LocalDateTime getStorage() {
-		return storage;
-	}
-
-	public void setStorage(LocalDateTime storage) {
+	
+	public void setStorage(TimeStamp storage) {
 		this.storage = storage;
+	}
+	
+	public TimeStamp getStorage() {
+		return this.storage;
 	}
 
 	public Board clone() {
@@ -196,8 +515,9 @@ public class Board {
 				int y = getCells()[i][j].getC().getY();
 				int color = getCells()[i][j].getColor();
 				char type = getCells()[i][j].getType();
+				boolean moved = getCells()[i][j].getMoved();
 
-				cells[i][j] = new Piece(x, y, color, type);
+				cells[i][j] = new Piece(x, y, color, type, moved);
 			}
 		}
 		copy.setCells(cells);
@@ -210,7 +530,6 @@ public class Board {
 	/*
 	 * Methods
 	 */
-
 	/**
 	 * Print the board in the terminal
 	 */
@@ -362,9 +681,9 @@ public class Board {
 
 				case 'p':
 					if (cells[i][j].getColor() == 0) {
-						System.out.print("│ □ ");
+						System.out.print("│ ▲ ");
 					} else {
-						System.out.print("│ ■ ");
+						System.out.print("│ ▼ ");
 					}
 					break;
 
@@ -380,10 +699,10 @@ public class Board {
 
 	/**
 	 * Print possible destination cells in the terminal
-	 * 
+	 *
 	 * @param p ArrayList of cells
 	 */
-	public void printMovements(Piece p) {		
+	public void printMovements(Piece p) {
 		System.out.println("┌───┬───┬───┬───┬───┬───┬───┬───┐");
 
 		int found = 0;
@@ -412,6 +731,7 @@ public class Board {
 	/**
 	 * Print the entire historic of moves
 	 */
+
 	public void printHistoric() {
 		System.out.println("Historic : ");
 		for (int i = 0; i < this.historic.size(); i++) {
@@ -427,7 +747,7 @@ public class Board {
 
 	/**
 	 * Gives us the Piece that is at x and y coordinates
-	 * 
+	 *
 	 * @param x Coordinate
 	 * @param y Coordinate
 	 * @return a Piece at (x;y)
@@ -438,7 +758,7 @@ public class Board {
 
 	/**
 	 * Rework the possible moves according to the board
-	 * 
+	 *
 	 * @param king is the piece we work on
 	 */
 	public void cleanMovesKing(Piece king) {
@@ -468,7 +788,7 @@ public class Board {
 			int y = king_final_moves.get(i).getY();
 			simulation.getCells()[king.getC().getX()][king.getC().getY()] = new Piece(king.getC().getX(),
 					king.getC().getY());
-			simulation.getCells()[x][y] = new Piece(x, y, this.getTurn(), 'k');
+			simulation.getCells()[x][y] = new Piece(x, y, this.getTurn(), 'k', true);
 			if (simulation.isChecked()) {
 				impossible_moves.add(new Coord(x, y));
 			}
@@ -482,7 +802,7 @@ public class Board {
 
 	/**
 	 * Rework the possible moves according to the board
-	 * 
+	 *
 	 * @param pawn is the piece we work on
 	 */
 	public void cleanMovesPawn(Piece pawn) {
@@ -498,6 +818,10 @@ public class Board {
 			}
 		}
 
+
+		int px = pawn.getC().getX();
+		int py = pawn.getC().getY();
+		
 		// We verify if the destination cells contains a piece
 		for (int i = 0; i < pawn.getMoves().size(); i++) {
 			int x = pawn.getMoves().get(i).getX();
@@ -511,14 +835,17 @@ public class Board {
 				impossible_moves.add(c);
 				removed++;
 			}
-			// if the opponent is in front, we remove every move
-			if (removed == 1) {
-				impossible_moves.add(c);
+			// if there is a piece directly in front we remove every move
+			if (pawn.getColor() == 0) {
+				if (getPieceOnCell(px-1, py).getType() != 'e') {
+					pawn_final_moves.clear();
+				}
+			} else {
+				if (getPieceOnCell(px+1, py).getType() != 'e') {
+					pawn_final_moves.clear();
+				}
 			}
 		}
-
-		int px = pawn.getC().getX();
-		int py = pawn.getC().getY();
 
 		// We check for diagonal eating-moves
 		// if it's white
@@ -561,7 +888,7 @@ public class Board {
 
 	/**
 	 * Rework the possible moves according to the board
-	 * 
+	 *
 	 * @param rook is the piece we work on
 	 */
 	public void cleanMovesRook(Piece rook) {
@@ -690,7 +1017,7 @@ public class Board {
 
 	/**
 	 * Rework the possible moves according to the board
-	 * 
+	 *
 	 * @param bishop is the piece we work on
 	 */
 	public void cleanMovesBishop(Piece bishop) {
@@ -830,7 +1157,7 @@ public class Board {
 
 	/**
 	 * Rework the possible moves according to the board
-	 * 
+	 *
 	 * @param queen is the piece we work on
 	 */
 	public void cleanMovesQueen(Piece queen) {
@@ -843,7 +1170,7 @@ public class Board {
 
 	/**
 	 * Rework the possible moves according to the board
-	 * 
+	 *
 	 * @param horse is the piece we work on
 	 */
 	public void cleanMovesHorse(Piece horse) {
@@ -900,7 +1227,7 @@ public class Board {
 
 	/**
 	 * Verify is the actual player can do the big castling move
-	 * 
+	 *
 	 * @return true or false in answer of the method's name
 	 */
 	public boolean isBigCastlingOk() {
@@ -951,8 +1278,8 @@ public class Board {
 		// Then if the player is going to be check after castling
 		// we get the soon-to-be king coordinates
 
-		Piece soon_to_be_king = new Piece(-1, -1, this.getTurn(), 'k');
-		Piece soon_to_be_rook = new Piece(-1, -1, this.getTurn(), 'r');
+		Piece soon_to_be_king = new Piece(-1, -1, this.getTurn(), 'k', true);
+		Piece soon_to_be_rook = new Piece(-1, -1, this.getTurn(), 'r', true);
 		soon_to_be_king.setC(new Coord(king.getC().getX(), king.getC().getY() - 2));
 		soon_to_be_rook.setC(new Coord(big_rook.getC().getX(), big_rook.getC().getY() + 3));
 
@@ -966,10 +1293,10 @@ public class Board {
 
 		// we put the king in the future cell
 		simulation.cells[soon_to_be_king.getC().getX()][soon_to_be_king.getC().getY()] = new Piece(
-				soon_to_be_king.getC().getX(), soon_to_be_king.getC().getY(), this.getTurn(), 'k');
+				soon_to_be_king.getC().getX(), soon_to_be_king.getC().getY(), this.getTurn(), 'k', true);
 		// and the rook
 		simulation.cells[soon_to_be_rook.getC().getX()][soon_to_be_rook.getC().getY()] = new Piece(
-				soon_to_be_rook.getC().getX(), soon_to_be_rook.getC().getY(), this.getTurn(), 'r');
+				soon_to_be_rook.getC().getX(), soon_to_be_rook.getC().getY(), this.getTurn(), 'r', true);
 
 		if (simulation.isChecked()) {
 			return false;
@@ -980,7 +1307,7 @@ public class Board {
 
 	/**
 	 * Verify is the actual player can do the small castling move
-	 * 
+	 *
 	 * @return true or false in answer of the method's name
 	 */
 	public boolean isSmallCastlingOk() {
@@ -1028,8 +1355,8 @@ public class Board {
 		// Then if the player is going to be check after castling
 		// we get the soon-to-be king coordinates
 
-		Piece soon_to_be_king = new Piece(-1, -1, this.getTurn(), 'k');
-		Piece soon_to_be_rook = new Piece(-1, -1, this.getTurn(), 'r');
+		Piece soon_to_be_king = new Piece(-1, -1, this.getTurn(), 'k', true);
+		Piece soon_to_be_rook = new Piece(-1, -1, this.getTurn(), 'r', true);
 
 		soon_to_be_king.setC(new Coord(king.getC().getX(), king.getC().getY() + 2));
 		soon_to_be_rook.setC(new Coord(small_rook.getC().getX(), small_rook.getC().getY() - 2));
@@ -1044,10 +1371,10 @@ public class Board {
 
 		// we put the king in the future cell
 		simulation.cells[soon_to_be_king.getC().getX()][soon_to_be_king.getC().getY()] = new Piece(
-				soon_to_be_king.getC().getX(), soon_to_be_king.getC().getY(), this.getTurn(), 'k');
+				soon_to_be_king.getC().getX(), soon_to_be_king.getC().getY(), this.getTurn(), 'k', true);
 		// and the rook
 		simulation.cells[soon_to_be_rook.getC().getX()][soon_to_be_rook.getC().getY()] = new Piece(
-				soon_to_be_rook.getC().getX(), soon_to_be_rook.getC().getY(), this.getTurn(), 'r');
+				soon_to_be_rook.getC().getX(), soon_to_be_rook.getC().getY(), this.getTurn(), 'r', true);
 
 		if (simulation.isChecked()) {
 			// System.out.println("will be checked");
@@ -1065,7 +1392,7 @@ public class Board {
 
 	/**
 	 * Verify is the actual player can do a castling move
-	 * 
+	 *
 	 * @return true or false in answer of the method's name
 	 */
 	public boolean isCastlingOk() {
@@ -1078,7 +1405,7 @@ public class Board {
 
 	/**
 	 * To find if the king is being checked
-	 * 
+	 *
 	 * @return a boolean to answer the method name
 	 */
 	public boolean isChecked() {
@@ -1102,7 +1429,7 @@ public class Board {
 
 	/**
 	 * Simple method to have the actual turn king's
-	 * 
+	 *
 	 * @return the piece corresponding of the king
 	 */
 	public Piece getKing() {
@@ -1119,12 +1446,11 @@ public class Board {
 
 	/**
 	 * Method to move one piece, and also manage the time between each eat()
-	 * 
+	 *
 	 * @param hunter the piece to move
 	 * @param hunted the destination piece
 	 */
 	public void eat(Piece hunter, Piece hunted) {
-		hunter.setMoved(true);
 
 		int hunter_x = hunter.getC().getX();
 		int hunter_y = hunter.getC().getY();
@@ -1134,7 +1460,7 @@ public class Board {
 		// We must check that the hunted is reachable by the hunter
 		for (int i = 0; i < hunter.getMoves().size(); i++) {
 			if (!hunter.getMoves().contains(new Coord(hunted.getC().getX(), hunted.getC().getY()))) {
-				//if it's not we nullify the action
+				// if it's not we nullify the action
 				return;
 			}
 		}
@@ -1146,7 +1472,7 @@ public class Board {
 		this.getCells()[hunter_x][hunter_y] = new Piece(hunter_x, hunter_y);
 
 		// in the hunted cell we put the hunter
-		this.getCells()[hunted_x][hunted_y] = new Piece(hunted_x, hunted_y, hunter.getColor(), hunter.getType());
+		this.getCells()[hunted_x][hunted_y] = new Piece(hunted_x, hunted_y, hunter.getColor(), hunter.getType(), true);
 
 		// Todo
 		// How do we manage time ?
@@ -1155,17 +1481,23 @@ public class Board {
 
 		// we check if it's first turn, so time will start after this move
 		if (this.getTime_black() == this.getTime_white() && this.getTime_black() == 2400) {
-			this.setStorage(LocalDateTime.now());
+			this.setStorage(new TimeStamp());
 		} else {
 			// if it's the black turn
 			if (this.getTurn() == 1) {
-				this.setTime_black((int) ChronoUnit.SECONDS.between(this.getStorage(), LocalDateTime.now()));
-				this.setStorage(LocalDateTime.now());
+				TimeStamp newTime = new TimeStamp();
+				int delta_minutes = this.getStorage().getMinute() - newTime.getSeconds();
+				int delta_seconds = this.getStorage().getSeconds() - newTime.getSeconds();
+				this.setTime_black(this.getTime_black() - delta_minutes * 60 - delta_seconds);
+				this.setStorage(new TimeStamp());
 			}
 			// if it's the white turn
 			else {
-				this.setTime_white((int) ChronoUnit.SECONDS.between(this.getStorage(), LocalDateTime.now()));
-				this.setStorage(LocalDateTime.now());
+				TimeStamp newTime = new TimeStamp();
+				int delta_minutes = this.getStorage().getMinute() - newTime.getSeconds();
+				int delta_seconds = this.getStorage().getSeconds() - newTime.getSeconds();
+				this.setTime_white(this.getTime_white() - delta_minutes * 60 - delta_seconds);
+				this.setStorage(new TimeStamp());
 			}
 		}
 
@@ -1175,13 +1507,15 @@ public class Board {
 		temp.add(new Mov(hunter.getType(), hunter.getC(), hunted.getType(), hunted.getC()));
 		this.setHistoric(temp);
 		updateMoves();
+		hunter.setMoved(true);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param hunter piece
 	 * @param hunted piece
-	 * @return true if you can do this move without being in check after 
+	 * @return true if you can do this move without being in check after and is
+	 *         allowed by the hunter moves
 	 */
 	public boolean isLegal(Piece hunter, Piece hunted) {
 		Piece cells[][] = new Piece[8][8];
@@ -1195,7 +1529,7 @@ public class Board {
 				cells[i][j] = new Piece(x, y, color, type, moved);
 			}
 		}
-		Board simulation = new Board(cells, this.getTurn(), this.getResult());		
+		Board simulation = new Board(cells, this.getTurn(), this.getResult());
 		int hunter_x = hunter.getC().getX();
 		int hunter_y = hunter.getC().getY();
 		int hunted_x = hunted.getC().getX();
@@ -1204,12 +1538,25 @@ public class Board {
 		// in the hunter cell we put nothing
 		simulation.getCells()[hunter_x][hunter_y] = new Piece(hunter_x, hunter_y);
 		// in the hunted cell we put the hunter
-		simulation.getCells()[hunted_x][hunted_y] = new Piece(hunted_x, hunted_y, hunter.getColor(), hunter.getType());
+		simulation.getCells()[hunted_x][hunted_y] = new Piece(hunted_x, hunted_y, hunter.getColor(), hunter.getType(), true);
 		simulation.updateMoves();
 		if (simulation.isChecked()) {
 			return false;
 		}
-		return true;
+
+		// if the desired landing cell is not reachable by the hunter (JS attack)
+		int nb_reachable = 0;
+		for (int i = 0; i < hunter.getMoves().size(); i++) {
+			if (hunted_x == hunter.getMoves().get(i).getX() && hunted_y == hunter.getMoves().get(i).getY()) {
+				nb_reachable++;
+			}
+		}
+
+		if (nb_reachable > 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -1231,7 +1578,7 @@ public class Board {
 
 	/**
 	 * To verify is the actual player has lost
-	 * 
+	 *
 	 * @return true if lost false if not
 	 */
 	public boolean isCheckMate() {
@@ -1289,8 +1636,6 @@ public class Board {
 		if (getResult() == -1) {
 			if (impossibleCheckMate()) {
 				return true;
-			} else if (threeFoldRepetition()) {
-				return true;
 			} else if (fiftyMoves()) {
 				return true;
 			} else if (staleMate()) {
@@ -1302,9 +1647,14 @@ public class Board {
 		}
 	}
 
+	/**
+	 * Verify draw option according to "no legal moves left" rule
+	 *
+	 * @return
+	 */
 	public boolean staleMate() {
-		//the player can only move the king and if he does, he'll be in check
-		//then it's a draw		
+		// the player can only move the king and if he does, he'll be in check
+		// then it's a draw
 		Piece cells[][] = new Piece[8][8];
 		for (int i = 0; i < cells.length; i++) {
 			for (int j = 0; j < cells[i].length; j++) {
@@ -1315,23 +1665,23 @@ public class Board {
 				boolean moved = this.getCells()[i][j].getMoved();
 				cells[i][j] = new Piece(x, y, color, type, moved);
 			}
-		}	
+		}
 
 		ArrayList<Piece> pieces_left = this.getLeftovers(this.getTurn());
 		for (int i = 0; i < pieces_left.size(); i++) {
 			Board simulation = new Board(cells, this.getTurn(), this.getResult());
-			//we check every move of every piece if it's not illegal
+			// we check every move of every piece if it's not illegal
 
 			int hunter_x1 = pieces_left.get(i).getC().getX();
 			int hunter_y1 = pieces_left.get(i).getC().getY();
 			Piece hunter = simulation.getPieceOnCell(hunter_x1, hunter_y1);
-			//hunter.printPiece();			
+			// hunter.printPiece();
 			for (int j = 0; j < pieces_left.get(i).getMoves().size(); j++) {
 				int x2 = pieces_left.get(i).getMoves().get(j).getX();
 				int y2 = pieces_left.get(i).getMoves().get(j).getY();
 				Piece hunted = simulation.getPieceOnCell(x2, y2);
-				
-				//System.out.println(simulation.isLegal(hunter, hunted));
+
+				// System.out.println(simulation.isLegal(hunter, hunted));
 				if (simulation.isLegal(hunter, hunted)) {
 					return false;
 				}
@@ -1340,41 +1690,37 @@ public class Board {
 		return true;
 	}
 
-	private boolean threeFoldRepetition() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	/**
-	 * Verify draw option according to the rule "fifty moves with nothing interesting"
-	 * 
+	 * Verify draw option according to the rule "fifty moves with nothing
+	 * interesting"
+	 *
 	 * @return
 	 */
 	public boolean fiftyMoves() {
 		ArrayList<Mov> historic = this.getHistoric();
-		
-		//If there's less than 50 moves obviously ...
+
+		// If there's less than 50 moves obviously ...
 		if (historic.size() < 50) {
 			return false;
 		}
-		
+
 		int nb_lunch = 0;
 		int nb_pawn_moves = 0;
-		
-		//we look at the last 50 moves and see if something ate something 
-		//or if a pawn was moved
+
+		// we look at the last 50 moves and see if something ate something
+		// or if a pawn was moved
 		for (int i = historic.size() - 50; i < historic.size(); i++) {
 			int t1 = historic.get(i).getP1();
 			int t2 = historic.get(i).getP2();
 			if (t1 == 'p') {
-				nb_pawn_moves ++;
+				nb_pawn_moves++;
 			}
 			if (t2 != 'e') {
-				nb_lunch ++;
+				nb_lunch++;
 			}
 		}
-		
-		//if none of the above were done 
+
+		// if none of the above were done
 		if (nb_lunch == 0 && nb_pawn_moves == 0) {
 			return true;
 		} else {
@@ -1384,6 +1730,7 @@ public class Board {
 
 	/**
 	 * Gathers in one array all the pieces that are still in game
+	 *
 	 * @param turn more exactly color of player's leftovers
 	 * @return
 	 */
@@ -1401,6 +1748,7 @@ public class Board {
 
 	/**
 	 * Verify draw option according to the rule "no mean to check mate"
+	 *
 	 * @return true if impossible to check mate
 	 */
 	public boolean impossibleCheckMate() {
@@ -1456,7 +1804,7 @@ public class Board {
 						cpt++;
 					}
 				}
-				//if the bishops move on the same color
+				// if the bishops move on the same color
 				if (bishop_colors[0] == bishop_colors[1]) {
 					return true;
 				}
