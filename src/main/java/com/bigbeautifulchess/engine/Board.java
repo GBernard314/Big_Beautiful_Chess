@@ -32,8 +32,8 @@ public class Board {
 	 * 0 if it's a draw <br>
 	 * 1 if it's won by player 1 <br>
 	 * 2 if it's won by player 2 <br>
-	 * 666 if player 1 is being checked <br>
-	 * 1666 if player 2 is being checked
+	 * -666 if player 1 is being checked <br>
+	 * -1666 if player 2 is being checked
 	 */
 	private int result;
 
@@ -989,8 +989,6 @@ public class Board {
 			}
 		}
 
-		System.out.println("obstacle in x = " + xmin);
-		System.out.println("MAX = "+ xmax + ";" + ymax + "   min = " + xmin + ";"+ ymin);
 		// Now we keep only the ones between xmin;ymin and xmam;ymax
 		for (int i = 0; i < rook_final_moves.size(); i++) {
 			int x = rook_final_moves.get(i).getX();
@@ -1417,7 +1415,7 @@ public class Board {
 				for (int j2 = 0; j2 < temp_moves.size(); j2++) {
 					if (temp_moves.get(j2).equals(king.getC())) {
 						if (cells[i][j].getColor() != king.getColor()) {
-							this.setResult(this.getTurn() * 1000 + 666);
+							this.setResult((this.getTurn() * 1000 + 666)*-1);
 							return true;
 						}
 

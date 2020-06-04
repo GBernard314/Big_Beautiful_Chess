@@ -19,10 +19,7 @@ public class BigbeautifulchessApplication {
 		game.getCells()[2][2] = new Piece(2, 2, 0, 'p', false);
 		game.getCells()[3][2] = new Piece(2, 2, 0, 'p', false);
 		game.updateMoves();
-		game.printBoardSimple();
-		game.printMovements(game.getPieceOnCell(3, 3));
 		game.eat(game.getPieceOnCell(4, 4), game.getPieceOnCell(5, 4));
-		game.printBoardSimple();
 		game.printMovements(game.getPieceOnCell(3, 3));
 		/*
 		
