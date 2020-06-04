@@ -14,17 +14,18 @@ public class BigbeautifulchessApplication {
 		
 		Board game = new Board(false);
 		
-		game.getCells()[3][3] = new Piece(3, 3, 0, 'q', false);
-		game.getCells()[4][4] = new Piece(4, 4, 1, 'p', false);
+		game.getCells()[0][4] = new Piece(0, 4, 1, 'k', false);
+		game.getCells()[1][4] = new Piece(1, 4, 1, 'p', false);
 		//game.getCells()[2][2] = new Piece(2, 2, 0, 'p', false);
-		game.getCells()[3][2] = new Piece(3, 2, 0, 'p', false);
-		game.getCells()[4][3] = new Piece(4, 3, 0, 'p', false);
-		game.getCells()[2][3] = new Piece(2, 3, 1, 'p', false);
+		game.getCells()[0][5] = new Piece(0, 5, 1, 'b', false);
+		game.getCells()[1][5] = new Piece(1, 5, 1, 'p', false);
+		//game.getCells()[2][3] = new Piece(2, 3, 1, 'p', false);
 		game.updateMoves();
+		game.printBoardSimple();
+		game.eat(game.getPieceOnCell(0, 4), game.getPieceOnCell(0, 3));
 		//game.eat(game.getPieceOnCell(4, 4), game.getPieceOnCell(5, 4));
 		game.printBoardSimple();
-		game.getPieceOnCell(4, 2).printPiece();
-		game.printMovements(game.getPieceOnCell(3, 3));
+		game.printMovements(game.getPieceOnCell(0, 3));
 		/*
 		
 		//ArrayList of coordinates to remove
