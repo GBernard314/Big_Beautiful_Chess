@@ -1,0 +1,137 @@
+<!doctype html>
+<html
+	th:replace="~{layout :: layout(~{::title}, ~{::content}, ~{::customScript})}"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:fragment="title">Play</title>
+</head>
+<body>
+	<div th:fragment="content" class="container-fluid">
+		<div class="row justify-content-md-center d-flex">
+			<div class="col col-md-auto">
+				<div id="header" class="d-flex justify-content-between">
+					<span id="bombSpan" >000</span>
+					<span id="reactionSpan">🙂</span>
+					<span id="timeSpan">00:00</span>
+				</div>
+				
+				<table onload="" border="1" class="gameGrid" id="game">
+					<tbody>
+						<tr th:each="x : ${#numbers.sequence(0,7,1)}" th:with="row=${board.cells[x]}">
+							<td th:each="y : ${#numbers.sequence(0,7,1)}" th:with="piece=${board.cells[x][y]}" 
+								class="text-center caseGrille"
+								th:style="${ (y%2 + x)%2 ==0 ? 'background:lightgrey': 'background:white'}">
+							<a th:if="${!piece.isEmpty() or pieceInSelection!=null}" 
+							th:class="${  piece.isEmpty()? 'clickableEmpty' : 
+								( (pieceInSelection!=null and pieceInSelection.getCoord().equals(x,y)) ? 'selectedPiece' :
+								(piece.color==0? 'clickablePawn' : 'adversePawn') )  }" 
+								style="width: 100%; height: 100%; display: block; text-decoration: none" href="#" th:onclick="actionCase([[${x}]],[[${y}]])">
+								
+									<img class="p-1 py-2" th:unless="${piece.isEmpty()}" th:alt="${piece.type}" th:src='${"assets/chess_icons/"+ (piece.color==0? "white" : "black") +"/"+piece.type+".svg"}'>
+									<!-- Movement helpers -->
+									<th:block th:if="${piece.isEmpty() and pieceInSelection!=null and moves !=null}">
+										<th:block th:each="move : ${moves}">
+											<img th:if="${move.equals(x,y)}" class="dotHelper" th:src="@{assets/chess_icons/dot.svg}" width="32">
+										</th:block>
+									</th:block>
+							</a>
+							</td>
+						</tr>
+					  </tbody>
+				</table>
+			</div>
+		</div>
+		<br>
+		<div class="text-center" >
+			<!-- Infos -->
+			<!--
+			<p th:text="'Nombre de cases : ' + ${board.getNombreCases()}">Nombre de cases : 0 </p>
+			<p th:text="'Nombre de mines : ' + ${board.getNbMine()}">Nombre de cases : 0 </p>
+			<p th:if="${board.lost == false}" th:text="'Cases sûres restantes : ' + ${(board.getNombreCases() -board.getNombreCasesDecouvertes()) - board.getNbMine()} + '/' + ${board.getNombreCases()}">Nombre de cases : 0 </p>
+			<p th:if="${board.lost == false}" th:text="'Probabilité de ne pas tomber sur une mine : ' + ${board.retourneChance()} +'%'">Chance de victoires : 0 </p>
+			-->
+			<a class="btn btn-primary" href="#" th:href="|/reset|">Reinitialiser</a>
+			<a th:if="${board.result < 0}" th:href="@{|/gamemode/list|}" class="btn btn-secondary">Modes de jeux</a>
+			<a th:if="${board.result < 0}" th:href="@{|/|}" class="btn btn-info">Accueil</a>
+			<a th:unless="${board.result < 0}" th:href="@{|/saveGame|}" class="btn btn-info">Sauver ma progression</a>
+		</div>
+			
+		<div id="overlay" th:if="${board.result >= 0}" class="overlay mx-auto text-center" >
+	        <h1 id="overlayTitle" th:text=" ${board.result>=2 ? 'PERDU' : 'GAGNÉ !'}" class="mx-auto my-4 text-uppercase text-white">WIN !</h1>
+	        <a  th:href="@{|/reset|}" href="#continue" class="btn btn-big btn-primary">Réessayer</a>
+	        <a th:href="@{|/gamemode/list|}" href="#about" class="btn btn-big btn-warning">Autres modes de jeu</a>
+	        <button onclick="undisplayOverlay()" class="btn btn-link text-white mx-3">Fermer <b class="px-2" style="color:white;background: #cc0000;"> X </b></button>
+	        
+	        <!--  Win/loose overlay + save score form -->
+	        <!-- 
+	     	<div class="mx-auto my-2 text-center">
+	        <img th:if="${board.lost}" th:src="@{../img/kim.gif}" src="../static/img/kim.gif" alt="kimgif" width="500" height="500">
+	      	<img th:if="${!board.lost}" th:src="@{/img/winwin.gif}" src="../static/img/winwin.gif" alt="you win" height="370">
+	      	<form th:if="${!board.lost}" action="#" th:action="@{/saveScore}" method="post" class="mx-auto my-3" style="width: 400px">
+				<div class="form-group">
+					<label for="pseudo" class="font-weight-bold text-white">Entres un pseudo pour sauver ton score :</label>
+					<input type="text" class="form-control" id="pseudo" name="owner" placeholder="xXDémineurXx..">
+				</div>
+				<button type="submit" class="btn btn-primary">Enregistrer</button>
+			</form>
+	      </div>
+	       -->
+	      
+	     </div>
+	     
+	     <script>
+	     	var timeElapsed;
+	     	var incrementTime;
+	     
+	     	window.onload = (function(){
+	     		//Recuperation du temps pour increment coté client
+	     		var counter = document.getElementById("timeSpan");
+	     		timeElapsed = parseInt(counter.innerHTML,10);
+	     		console.log("time init : "+timeElapsed);
+	     		
+	     		if(typeof incrementTime === "function"){
+	     			incrementTime();
+	     		}
+	     		
+	     	});
+	     	
+	     	//JS : pour cacher l'écran de défaite
+	     	function undisplayOverlay(){
+	     		var overlay = document.getElementById("overlay");
+	     		overlay.style.display = "none";
+	     		
+	     	}
+	     	
+	     	function actionCase(x,y){
+	     		 var link="/play/select/";
+	     		 link+= x.toString(),
+	     		 link += ",";
+	     		link+= y.toString();
+	     		 document.location.href = link; 
+	     	}
+	     	
+	     </script>
+	</div>
+	
+		<script th:fragment="customScript" th:if="${ board.result <0 }">
+			//JS : changer la tete de l'emoji au clic souris
+	     	window.addEventListener("mousedown",function(event){
+	     		var emoji = document.getElementById("reactionSpan");
+	     		reactionSpan.innerHTML = "😮";
+	     	});
+	     	//JS : changer la tete de l'emoji au relachement souris
+	     	window.addEventListener("mouseup",function(event){
+	     		var emoji = document.getElementById("reactionSpan");
+	     		reactionSpan.innerHTML = "🙂";
+	     	});
+	     
+	     	incrementTime = function(){
+	     		var counter = document.getElementById("timeSpan");
+	     		timeElapsed = timeElapsed + 1;
+	     		
+	     		counter.innerHTML = timeElapsed;
+	     		setTimeout(incrementTime, 1000);
+	     	};
+			</script>
+	</body>
+</html>

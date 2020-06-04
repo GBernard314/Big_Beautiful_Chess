@@ -1,0 +1,31 @@
+.caseGrille{
+	width : 60px;
+	height: 60px;
+	border : 0;
+}
+
+.clickablePawn:hover{
+  background-color: green;
+}
+
+.clickableEmpty:hover{
+ border : 2px solid blue;
+}
+
+.adversePawn:hover{
+  background-color: crimson;
+}
+
+.selectedPiece{
+	width: 100%;
+	height: 100%;
+	background : cyan;
+	z-index: -1
+}
+
+.dotHelper{
+	width: 24px;
+	height : 100%;
+	display : inline-block;
+	vertical-align: middle;
+}

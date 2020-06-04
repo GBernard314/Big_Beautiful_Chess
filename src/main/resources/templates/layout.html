@@ -1,50 +1,43 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout (title, content)">
-	<head>
-		<!-- meta -->
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		
-		<!-- bootstrap CSS -->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css" />
-		
-		<!-- allow templates to use jquery -->
-		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-		
-		
-		<!-- page title, will be replaced by given fragment -->
-		<title th:replace="${title}">Application Title</title>
-	</head>
-	<body>
-		<nav class="navbar navbar-expand-lg navbar-light bg-light">
-			<a class="navbar-brand" href="#" th:href="@{/}">Annuaire</a>
-			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-			
-			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul class="navbar-nav mr-auto">
-					
-				</ul>
-			</div>
-			
-			<form class="form-inline">
-				<div sec:authorize="isAuthenticated()">
-					Bonjour <span sec:authentication="name"></span>&nbsp;(<a th:href="@{/logout}" href="#">Déconnexion</a>)
-				</div>
-			</form>
-		</nav>
-		
-		<!-- our site will use bootstrap container layout -->
-		<div class="container">
-			<div class="jumbotron" th:replace="${content}">
-				<!-- content to templace -->
-				<p>Layout page, content gets here !</p>
-			</div>
-		</div>
-		
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-	</body>
+<html xmlns:th="http://www.thymeleaf.org" 
+    th:fragment="layout(title, content, customScript)"
+    th:replace="~{emptylayout :: emptylayout(~{::title}, ~{::body}, ~{::customScript})}"
+>
+    <body>
+        <div th:fragment="body">
+            <div id="main-wrapper">
+                <!-- Topbar header -->
+                <header th:replace="fragments/header :: header"></header>
+                <!-- End Topbar header -->
+                
+                <!-- Sidebar -->
+                <aside th:replace="fragments/sidebar :: sidebar"></aside>
+                <!-- End Sidebar -->
+
+                <!-- Main content wrapper-->
+                <div class="page-wrapper">
+                    <div class="container-fluid">
+                        
+                        <!-- Main content-->
+                        <div th:replace="${content}"></div>
+                        <!-- End content-->
+                    
+                    </div>
+
+                    <!-- footer -->
+                    <footer class="footer text-center">
+                        Big Beautiful Chess 2020 <a href="https://github.com">Check us on Github</a>.
+                    </footer>
+                    <!-- End footer -->
+                </div>
+            </div>
+
+            <!-- Setting Panel -->
+            <aside th:replace="fragments/sidepanel :: settingbar"></aside>
+            <!-- End Setting Panel-->
+            
+            <div class="chat-windows"></div>
+        </div>
+    </body>
+
 </html>

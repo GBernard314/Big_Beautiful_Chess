@@ -1,16 +1,24 @@
 package com.bigbeautifulchess.domain;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -18,6 +26,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Table(name="users")
 public class User implements UserDetails {
 	private static final long serialVersionUID = -2963008589618789228L;
+	
+	public User(String name) {
+		this.username = name;
+	}
+	
+	public User() {
+		
+	}
 	
 	@Id @Column
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -32,10 +48,13 @@ public class User implements UserDetails {
 	
 	@Column(length = 100)
 	private String email;
-
+	
+	@Column(length = 100)
+	private String friends_list_id; 
+	
 	@ManyToMany(fetch=FetchType.EAGER)
 	private Collection<Authority> authorities;
-
+	
 	@Override
 	public boolean isAccountNonExpired() {
 		return true;
@@ -49,6 +68,14 @@ public class User implements UserDetails {
 	@Override
 	public boolean isCredentialsNonExpired() {
 		return true;
+	}
+
+	public String getFriends_list_id() {
+		return friends_list_id;
+	}
+
+	public void setFriends_list_id(String friends_list_id) {
+		this.friends_list_id = friends_list_id;
 	}
 
 	@Override
@@ -95,4 +122,13 @@ public class User implements UserDetails {
 	public void setAuthorities(Collection<Authority> authorities) {
 		this.authorities = authorities;
 	}
+	
+	public String[] splitFriendsList() {
+		String s = this.friends_list_id;
+		String[] result = s.split(";");
+		for (String a : result) 
+            System.out.println(a); 
+		return result;
+	}
+	
 }

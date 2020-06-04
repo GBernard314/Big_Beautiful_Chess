@@ -1,6 +1,14 @@
 package com.bigbeautifulchess.tools;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
 public class Coord {
+	
+	private Long id;
 	
 	/**
 	 * x coordinate 
@@ -10,6 +18,7 @@ public class Coord {
 	/**
 	 * y coordinate
 	 */
+	
 	private int y;
 
 	/**
@@ -64,6 +73,10 @@ public class Coord {
 		return true;
 	}
 	
+	public boolean equals(int x, int y) {
+		if(x == this.x && y == this.y) return true;
+		return false;
+	}
 	
 	
 }
