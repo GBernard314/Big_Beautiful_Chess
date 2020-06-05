@@ -102,12 +102,33 @@
 	     		 link += ",";
 	     		link+= y.toString();
 	     		 document.location.href = link; 
+	     		 
+	     		getUpdate();
 	     	}
 	     	
 	     </script>
 	</div>
 	
 		<script th:fragment="customScript" th:if="${ board.result <0 }">
+		
+			$(function (){
+				console.log("document pret");
+				
+				function getUpdate(){
+					var promise = $.ajax({url: '/game/play/ajax'});
+					
+					promise.done( function(response){
+						console.log("promise.done");
+						if(response.type == 'success'){
+							alert("response ! ");
+							console.log(response);
+						}
+					});
+				}
+				getUpdate();
+				
+			})
+		
 	     	incrementTime = function(){
 	     		var counter = document.getElementById("timeSpan");
 	     		timeElapsed = timeElapsed + 1;

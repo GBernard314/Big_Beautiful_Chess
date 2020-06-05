@@ -25,6 +25,7 @@ import com.bigbeautifulchess.engine.Board;
 import com.bigbeautifulchess.engine.Piece;
 import com.bigbeautifulchess.repository.GameRepository;
 import com.bigbeautifulchess.repository.UserRepository;
+import com.bigbeautifulchess.service.AjaxResponse;
 
 @Controller
 @RequestMapping("/game")
@@ -183,6 +184,9 @@ public class GameController {
 		if(b == null) {
 			return "redirect:/game/reset";
 		}
+		if(myself == null) {
+			return "redirect:/";
+		}
 		System.out.println(b.getTurn());
 		model.addAttribute("board", b);
 		model.addAttribute("pieceInSelection", selectedPiece);
@@ -281,4 +285,10 @@ public class GameController {
 		return "redirect:/game/play";
 	}
 	
+	
+	@GetMapping(value = "/game/play/ajax")
+	  public AjaxResponse getResource() {
+		AjaxResponse response = new AjaxResponse("Done", b);
+	    return response;
+	  }
 }
