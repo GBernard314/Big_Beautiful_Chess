@@ -49,21 +49,6 @@
 			</div>
 		</div>
 		<br>
-		<div class="text-center" >
-			<!-- Infos -->
-			
-			<h4 th:if="${board.turn == 0}" th:text="${'Au tour de ' + myself.username +' !'}">Au tour de bidule</h4>
-			<h4 th:if="${board.turn == 1}" th:text="${'Au tour de ' + opponent.username +' !'}">Au tour de truc</h4>
-			
-			<button class="btn" th:classappend="${board.isSmallCastlingOk() ? 'btn-primary' : 'btn-secondary'} ">Small Castling</button>
-			<button class="btn" th:classappend="${board.isBigCastlingOk() ? 'btn-primary' : 'btn-secondary'} ">Big Castling</button>
-			<button class="btn" th:classappend="${board.draw() ? 'btn-danger' : 'btn-secondary'} ">Draw</button>
-			
-			<a class="btn btn-primary" href="#" th:href="@{/game/reset}">Reinitialiser</a>
-			<a th:if="${board.result < 0}" th:href="@{|/|}" class="btn btn-info">Accueil</a>
-			<a th:if="${board.result < 0}" th:href="@{/game/save}" class="btn btn-primary">Sauvegarde</a>
-		</div>
-			
 		<div id="overlay" th:if="${board.result >= 0}" class="overlay mx-auto text-center" >
 	        <h3 class="my-3 text-info">Roi en échec</h3>
 	        <h2 class="my-3 text-danger" th:if="${board.isCheckMate()}" >Echec et math !</h2>
@@ -71,7 +56,23 @@
 	        <h2 class="my-3 text-warning" th:if="${board.result == 1}" th:text="${myself.username + ' a remporté la partie ! '}" >Victoire !</h2>
 	        <h2 class="my-3 text-warning" th:if="${board.result == 2}" th:text="${opponent.username + ' a remporté la partie ! '}" >Victoire !</h2>
 	     </div>
-	     
+	     <div class="text-center" >
+			<!-- Infos -->
+			
+			<h4 th:if="${board.turn == 0}" th:text="${'Au tour de ' + myself.username +' !'}">Au tour de bidule</h4>
+			<h4 th:if="${board.turn == 1}" th:text="${'Au tour de ' + opponent.username +' !'}">Au tour de truc</h4>
+			<b>Coups disponibles :</b> 
+			<button th:disabled="${!board.isSmallCastlingOk()}" class="btn" th:classappend="btn-info">Small Castling</button>
+			<button th:disabled="${!board.isBigCastlingOk()}" class="btn" th:classappend="btn-info">Big Castling</button>
+			<button th:disabled="${!board.draw()}" class="btn" th:classappend="btn-danger">Draw</button>
+		</div>
+		<br>
+		 <div class="text-center" >			
+			<!-- <a class="btn btn-primary" href="#" th:href="@{/game/reset}">Reinitialiser</a> -->
+			<a th:href="@{/game/save}" class="btn btn-success">Sauvegarder et Quitter</a>
+			<a th:href="@{|/|}" class="btn btn-danger">Quitter sans sauver</a>
+
+		</div>
 	     <script>
 	     	var timeElapsed;
 	     	var incrementTime;
@@ -107,17 +108,6 @@
 	</div>
 	
 		<script th:fragment="customScript" th:if="${ board.result <0 }">
-			//JS : changer la tete de l'emoji au clic souris
-	     	window.addEventListener("mousedown",function(event){
-	     		var emoji = document.getElementById("reactionSpan");
-	     		reactionSpan.innerHTML = "😮";
-	     	});
-	     	//JS : changer la tete de l'emoji au relachement souris
-	     	window.addEventListener("mouseup",function(event){
-	     		var emoji = document.getElementById("reactionSpan");
-	     		reactionSpan.innerHTML = "🙂";
-	     	});
-	     
 	     	incrementTime = function(){
 	     		var counter = document.getElementById("timeSpan");
 	     		timeElapsed = timeElapsed + 1;
@@ -125,6 +115,8 @@
 	     		counter.innerHTML = timeElapsed;
 	     		setTimeout(incrementTime, 1000);
 	     	};
+	     	
+	     	
 			</script>
 	</body>
 </html>

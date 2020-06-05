@@ -54,13 +54,15 @@
                                     </li>
                                     <li>
                                         <div class="message-center message-body">
-                                            <a th:each="friend,i : ${friends}" class="message-item">
+                                            <a th:each="friend,i : ${friends}" th:href="${'mailto:'+friend.email}" class="message-item">
                                                 <span class="user-img">
                                                     <img th:src="${'/assets/images/users/'+((i.getIndex())+1)+'.jpg'}" alt="user" class="rounded-circle">
                                                     <span class="profile-status online pull-right"></span>
                                                 </span>
                                                 <div class="mail-contnet">
                                                     <h5 th:text="${friend.getUsername()}" class="message-title">Mario</h5>
+                                                    
+                                                <span>Mail to <th:block th:text="${friend.getUsername()}">mario</th:block></span>
                                                 </div>
                                             </a>
                                         </div>
