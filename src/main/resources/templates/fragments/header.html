@@ -35,78 +35,10 @@
                                 <i class="sl-icon-menu font-20"></i>
                             </a>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="ti-bell font-20"></i>
-                            </a>
-                            <div class="dropdown-menu mailbox animated bounceInDown">
-                                <span class="with-arrow">
-                                    <span class="bg-primary"></span>
-                                </span>
-                                <ul class="list-style-none">
-                                    <li>
-                                        <div class="drop-title bg-primary text-white">
-                                            <h4 class="m-b-0 m-t-5">4 Non lues</h4>
-                                            <span class="font-light">Notifications</span>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="message-center notifications">
-                                            <!-- Message -->
-                                            <a href="javascript:void(0)" class="message-item">
-                                                <span class="btn btn-danger btn-circle">
-                                                    <i class="fa fa-link"></i>
-                                                </span>
-                                                <div class="mail-contnet">
-                                                    <h5 class="message-title">John Rambo</h5>
-                                                    <span class="mail-desc">Partie en attente</span>
-                                                    <span class="time">9:36</span>
-                                                </div>
-                                            </a>
-                                            <!-- Message -->
-                                            <a href="javascript:void(0)" class="message-item">
-                                                <span class="btn btn-danger btn-circle">
-                                                    <i class="fa fa-link"></i>
-                                                </span>
-                                                <div class="mail-contnet">
-                                                    <h5 class="message-title">John Travolta</h5>
-                                                    <span class="mail-desc">Partie en attente</span>
-                                                    <span class="time">9:32</span>
-                                                </div>
-                                            </a>
-                                            <a href="javascript:void(0)" class="message-item">
-                                                <span class="btn btn-danger btn-circle">
-                                                    <i class="fa fa-link"></i>
-                                                </span>
-                                                <div class="mail-contnet">
-                                                    <h5 class="message-title">John Conway</h5>
-                                                    <span class="mail-desc">Partie en attente</span>
-                                                    <span class="time">9:24</span>
-                                                </div>
-                                            </a>
-                                            <!-- Message -->
-                                            <a href="javascript:void(0)" class="message-item">
-                                                <span class="btn btn-primary btn-circle">
-                                                    <i class="ti-user"></i>
-                                                </span>
-                                                <div class="mail-contnet">
-                                                    <h5 class="message-title">John Lennon</h5>
-                                                    <span class="mail-desc">Demande d'ami reçue</span>
-                                                    <span class="time">9:02</span>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-
-                        <!-- ============================================================== -->
-                        <!-- Amis -->
-                        <!-- ============================================================== -->
+                        
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" id="2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="font-20 ti-email"></i>
+                                <i class="font-20 ti-face-smile"></i>
 
                             </a>
                             <div class="dropdown-menu mailbox animated bounceInDown" aria-labelledby="2">
@@ -116,50 +48,19 @@
                                 <ul class="list-style-none">
                                     <li>
                                         <div class="drop-title bg-danger text-white">
-                                            <h4 class="m-b-0 m-t-5">5 Connectés</h4>
+                                            <h4 class="m-b-0 m-t-5"> <th:block th:text=${friends.size()}>5</th:block> Connectés</h4>
                                             <span class="font-light">Mes Amis</span>
                                         </div>
                                     </li>
                                     <li>
                                         <div class="message-center message-body">
-                                            <!-- Message -->
-                                            <a href="javascript:void(0)" class="message-item">
+                                            <a th:each="friend,i : ${friends}" class="message-item">
                                                 <span class="user-img">
-                                                    <img th:src="@{/assets/images/users/1.jpg}" alt="user" class="rounded-circle">
+                                                    <img th:src="${'/assets/images/users/'+((i.getIndex())+1)+'.jpg'}" alt="user" class="rounded-circle">
                                                     <span class="profile-status online pull-right"></span>
                                                 </span>
                                                 <div class="mail-contnet">
-                                                    <h5 class="message-title">Mario</h5>
-                                                </div>
-                                            </a>
-                                            <!-- Message -->
-                                            <a href="javascript:void(0)" class="message-item">
-                                                <span class="user-img">
-                                                    <img th:src="@{/assets/images/users/2.jpg}" alt="user" class="rounded-circle">
-                                                    <span class="profile-status busy pull-right"></span>
-                                                </span>
-                                                <div class="mail-contnet">
-                                                    <h5 class="message-title">Luigi</h5>
-                                                </div>
-                                            </a>
-                                            <!-- Message -->
-                                            <a href="javascript:void(0)" class="message-item">
-                                                <span class="user-img">
-                                                    <img th:src="@{/assets/images/users/3.jpg}" alt="user" class="rounded-circle">
-                                                    <span class="profile-status away pull-right"></span>
-                                                </span>
-                                                <div class="mail-contnet">
-                                                    <h5 class="message-title">Peach</h5>
-                                                </div>
-                                            </a>
-                                            <!-- Message -->
-                                            <a href="javascript:void(0)" class="message-item">
-                                                <span class="user-img">
-                                                    <img th:src="@{/assets/images/users/4.jpg}" alt="user" class="rounded-circle">
-                                                    <span class="profile-status offline pull-right"></span>
-                                                </span>
-                                                <div class="mail-contnet">
-                                                    <h5 class="message-title">Toad</h5>
+                                                    <h5 th:text="${friend.getUsername()}" class="message-title">Mario</h5>
                                                 </div>
                                             </a>
                                         </div>

@@ -65,10 +65,11 @@
 		</div>
 			
 		<div id="overlay" th:if="${board.result >= 0}" class="overlay mx-auto text-center" >
-	        <h3 class="my-3 text-danger">Roi en échec</h3>
+	        <h3 class="my-3 text-info">Roi en échec</h3>
 	        <h2 class="my-3 text-danger" th:if="${board.isCheckMate()}" >Echec et math !</h2>
-	        <h2 class="my-3 text-danger" th:if="${board.result == 1}" th:text="${myself.username + ' a remporté la partie ! '}" >Victoire !</h2>
-	        <h2 class="my-3 text-danger" th:if="${board.result == 2}" th:text="${opponent.username + ' a remporté la partie ! '}" >Victoire !</h2>
+	        <h2 class="my-3 text-warning" th:if="${board.result == 0}" th:text="Egalité ! Fin de la partie" >Victoire !</h2>
+	        <h2 class="my-3 text-warning" th:if="${board.result == 1}" th:text="${myself.username + ' a remporté la partie ! '}" >Victoire !</h2>
+	        <h2 class="my-3 text-warning" th:if="${board.result == 2}" th:text="${opponent.username + ' a remporté la partie ! '}" >Victoire !</h2>
 	     </div>
 	     
 	     <script>

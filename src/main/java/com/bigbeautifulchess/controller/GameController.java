@@ -113,27 +113,29 @@ public class GameController {
 		
 		gameRepository.save(game);
 		
-		return "redirect:/";
+		if(b.getResult()>0) {
+			return "redirect:/game/history";
+		}
+		return "redirect:/game/ongoing";
 	}
 
-	private List<Game> getGames(String username, Boolean ongoing) {
-		int finishedParam;
-		if(ongoing == true) finishedParam = -1;
-		else finishedParam = 1;
-		User user = userRepository.findByUsername(username);
-		List<Game> games = em.createQuery("select g from Game g JOIN g.users us where g.flag_winner !=:value and us.username = :valuename ",Game.class)
-				.setParameter("value", finishedParam)
-				.setParameter("valuename", username)
-				.getResultList();
+	private List<Game> getGames(User user, Boolean ongoing) {
+		List<Game> games = new ArrayList<>();
+		if(user != null) {
+			int finishedParam;
+			if(ongoing == true) finishedParam = -1;
+			else finishedParam = 1;
+			games = em.createQuery("select g from Game g JOIN g.users us where g.flag_winner !=:value and us.id = :valuename ",Game.class)
+					.setParameter("value", finishedParam)
+					.setParameter("valuename", user.getId())
+					.getResultList();
+		}
 		return games;
 	}
 	
-	@GetMapping("/history")
-	public String history(Model model, Authentication authentication) {
-		model.addAttribute("label", "Historique des parties");
-		model.addAttribute("gameList", getGames(authentication.getName(), true));
-		User user = userRepository.findByUsername(authentication.getName());
+	private List<User> getFriends(User user){
 		List<User> userlist = new ArrayList<>();
+		if(user != null) {
 		  String[] friend_list;
 		  if(user.getFriends_list_id() != null) {
 			  friend_list = user.splitFriendsList();
@@ -144,32 +146,30 @@ public class GameController {
 				  userlist.add(u.get(0));
 			  }
 		  }
-
+		}
+		return userlist;
+	}
+	
+	@GetMapping("/history")
+	public String history(Model model, Authentication authentication) {
+		User user = userRepository.findByUsername(authentication.getName());
+		
+		model.addAttribute("label", "Historique des parties");
 		model.addAttribute("userInfo", user);
-		model.addAttribute("friends", userlist);
+		model.addAttribute("friends", getFriends(user));
+		model.addAttribute("gameList", getGames(user, true));
 		
 		return "game-history";
 	}
 	
 	@GetMapping("/ongoing")
 	public String ongoing(Model model, Authentication authentication) {
-		model.addAttribute("label", "Parties en cours");
-		model.addAttribute("gameList", getGames(authentication.getName(), false));
 		User user = userRepository.findByUsername(authentication.getName());
-		List<User> userlist = new ArrayList<>();
-		  String[] friend_list;
-		  if(user.getFriends_list_id() != null) {
-			  friend_list = user.splitFriendsList();
-			  for(String a : friend_list) {
-				  List <User> u = em.createQuery("select u from User u where u.id =:value",User.class)
-						  			.setParameter("value", Long.parseLong(a))
-						  			.getResultList();
-				  userlist.add(u.get(0));
-			  }
-		  }
-
+		
+		model.addAttribute("label", "Parties en cours");
 		model.addAttribute("userInfo", user);
-		model.addAttribute("friends", userlist);
+		model.addAttribute("friends", getFriends(user));
+		model.addAttribute("gameList", getGames(user, false));
 		return "game-history";
 	}
 	
@@ -191,20 +191,9 @@ public class GameController {
 		}
 		
 		User user = userRepository.findByUsername(authentication.getName());
-		List<User> userlist = new ArrayList<>();
-		  String[] friend_list;
-		  if(user.getFriends_list_id() != null) {
-			  friend_list = user.splitFriendsList();
-			  for(String a : friend_list) {
-				  List <User> u = em.createQuery("select u from User u where u.id =:value",User.class)
-						  			.setParameter("value", Long.parseLong(a))
-						  			.getResultList();
-				  userlist.add(u.get(0));
-			  }
-		  }
 
 		model.addAttribute("userInfo", user);
-		model.addAttribute("friends", userlist);
+		model.addAttribute("friends", getFriends(user));
 		if(myself != null )
 			model.addAttribute("myself",myself);
 		if(opponent != null)
@@ -286,6 +275,7 @@ public class GameController {
 			}else {
 				b.setResult(1);
 			}
+			return "redirect:/game/save";
 		}
 		
 		return "redirect:/game/play";
