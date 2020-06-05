@@ -111,6 +111,7 @@
 	
 		<script th:fragment="customScript" th:if="${ board.result <0 }">
 		
+		/*
 			$(function (){
 				console.log("document pret");
 				
@@ -128,7 +129,7 @@
 				getUpdate();
 				
 			})
-		
+		*/
 	     	incrementTime = function(){
 	     		var counter = document.getElementById("timeSpan");
 	     		timeElapsed = timeElapsed + 1;

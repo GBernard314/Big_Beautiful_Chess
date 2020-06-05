@@ -113,10 +113,11 @@ public class San {
 				
 			}
 			
-			if(b.isChecked()) {
-				s=s+'+';
-			}else if(b.isCheckMate()) {
+			if(b.isCheckMate()) {
 				s=s+'#';
+			}
+			else if(b.isChecked()) {
+				s=s+'+';
 			}
 			
 			s=s+'\n';

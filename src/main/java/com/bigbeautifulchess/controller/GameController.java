@@ -27,6 +27,7 @@ import com.bigbeautifulchess.engine.CurrentBoard;
 import com.bigbeautifulchess.engine.Piece;
 import com.bigbeautifulchess.repository.GameRepository;
 import com.bigbeautifulchess.repository.UserRepository;
+import com.bigbeautifulchess.san.San;
 import com.bigbeautifulchess.service.AjaxResponse;
 
 @Controller
@@ -58,11 +59,45 @@ public class GameController {
 	
 	@GetMapping("/load/{gameid}")
 	public String loadGame(Model model, Authentication authentication, @PathVariable Long gameid){
+		boardInterface = new CurrentBoard();
 		Optional<Game> probableGame = gameRepository.findById(gameid);
 		if(probableGame.isPresent()) {
 			//Partie identifiée
 			boardInterface.loadBoard(probableGame.get());
 			return "redirect:/game/play";
+		}
+		
+		return "redirect:/";
+	}
+	
+	@GetMapping("/visualize/{gameid}")
+	public String visualizeGame(Model model, Authentication authentication, @PathVariable Long gameid){
+		boardInterface = new CurrentBoard();
+		Optional<Game> probableGame = gameRepository.findById(gameid);
+		if(probableGame.isPresent()) {
+			boardInterface.loadBoard(probableGame.get());
+			
+			if(boardInterface.getBoard() == null) {
+				return "redirect:/game/reset";
+			}
+			if(boardInterface.getWhitePlayer() == null) {
+				return "redirect:/";
+			}
+			model.addAttribute("board", boardInterface.getBoard());
+			
+			San san = new San();
+			model.addAttribute("boardSan", san.printSan(boardInterface.getBoard()));
+			
+			User user = userRepository.findByUsername(authentication.getName());
+			model.addAttribute("userInfo", user);
+			model.addAttribute("friends", getFriends(user));
+			
+			if(boardInterface.getWhitePlayer() != null )
+				model.addAttribute("myself",boardInterface.getWhitePlayer());
+			if(boardInterface.getBlackPlayer() != null)
+				model.addAttribute("opponent",boardInterface.getBlackPlayer());
+			
+			return "visualise";
 		}
 		
 		return "redirect:/";
@@ -146,6 +181,7 @@ public class GameController {
 		model.addAttribute("label", "Historique des parties");
 		model.addAttribute("userInfo", user);
 		model.addAttribute("friends", getFriends(user));
+		model.addAttribute("ongoing",false);
 		model.addAttribute("gameList", getGames(user, true));
 		
 		return "game-history";
@@ -159,11 +195,13 @@ public class GameController {
 		model.addAttribute("userInfo", user);
 		model.addAttribute("friends", getFriends(user));
 		model.addAttribute("gameList", getGames(user, false));
+		model.addAttribute("ongoing",true);
 		return "game-history";
 	}
 	
 	@GetMapping("/play")
 	public String play(Model model, Authentication authentication) {
+		boardInterface = new CurrentBoard();
 		if(boardInterface.getBoard() == null) {
 			return "redirect:/game/reset";
 		}

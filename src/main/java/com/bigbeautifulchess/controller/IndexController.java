@@ -11,9 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -80,6 +82,22 @@ public class IndexController {
 	public String showRegisterForm(WebRequest request, Model model) {
 		model.addAttribute("register", new User());
 		return "register";
+	}
+	
+	@Transactional
+	@GetMapping("/addFriend/{name}")
+	public String addFriend(@PathVariable String name, Authentication auth) {
+		User myself = userRepository.findByUsername(auth.getName());
+		User friend = userRepository.findByUsername(name);
+		if(friend != null) {
+			System.out.println("Ajout de "+friend.getUsername());
+			//attribuer à user en base (friend.id)
+			String friendlist=  myself.getFriends_list_id();
+			friendlist += ";"+friend.getId();
+			myself.setFriends_list_id(friendlist);
+			em.merge(myself);
+		}
+		return "redirect:/";
 	}
 	
 	@PostMapping("/register")

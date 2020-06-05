@@ -13,7 +13,7 @@
 						<h4 th:text="${label}" class="card-title">Mes parties</h4>
 						<div class="table-responsive">
 							<table class="table">
-								<thead class="bg-primary text-white">
+								<thead th:class="${ongoing}? 'text-white bg-success' : 'text-white bg-primary'">
 									<tr>
 										<th>#</th>
 										<th>Adversaire</th>
@@ -29,8 +29,7 @@
 										<td>
 											<div class="btn-group float-right" role="group"
 												aria-label="Button group with nested dropdown">
-												<a href="#" class="btn btn-success"><i
-													class="mdi mdi-eye"></i></a>
+													<a th:href="${'/game/visualize/'+game.id}" class="btn btn-success"><i class="mdi mdi-eye"></i></a>
 													<a th:href="${'/game/load/'+game.id}" href="#" class="btn btn-info"><i class="fas fa-chess">Jouer</i></a> 
 													<a th:href="${'/game/drop/'+game.id}" href="#" class="btn btn-light"><i class="mdi mdi-eraser"></i></a>
 											</div>
