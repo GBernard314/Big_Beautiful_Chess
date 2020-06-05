@@ -106,7 +106,7 @@ public class IndexController {
 		user.setUsername(form.getUsername());
 		user.setEmail(form.getEmail());
 		user.setPassword(passwordEncoder.encode(form.getPassword()));
-		user.setFriends_list_id("2;3;4");
+		user.setFriends_list_id("1;2");
 		userRepository.save(user);
 		
 		return "redirect:/login";
