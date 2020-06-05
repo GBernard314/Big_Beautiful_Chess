@@ -16,11 +16,9 @@
 
 ## What is it about ?
 
-**BBC** is ~~the British Broadcasting Corporation~~ **Big Beautiful Chess** the newest chess game, **online**, with friends list management which help playing chess with your friends all over the world.
+**BBC** is ~~the British Broadcasting Corporation~~ **Big Beautiful Chess** the newest chess game, **ONLINE**, with friends list management which help playing chess with your friends all over the world.
 
 This project was made in 4 days in a row, as a school subject given by <a href=" https://github.com/sminet">Sebastien MINET</a> through the <a href="https://www.isen.fr/">ISEN</a> curriculum.
-
-*screenshot plateau de jeu*
 
 ## What has been implemented yet
 
@@ -32,7 +30,9 @@ This project was made in 4 days in a row, as a school subject given by <a href="
 
 ## Collaborators
 
-<a href=" https://github.com/PDesoomer">Pierre DESOOMER</a> :
+[]: https://github.com/PDesoomer	"Pierre DESOOMER :"
+
+<a href="">Pierre DESOOMER</a> :
 
 - Managed the database relation with the controller.
 
@@ -56,7 +56,7 @@ This project was made in 4 days in a row, as a school subject given by <a href="
 
 ## Technologies used
 
-| <img src="https://image.flaticon.com/icons/svg/226/226777.svg" style="width:64px;height=64px;" /> | <img src="https://image.flaticon.com/icons/svg/888/888847.svg" style="width:64px;height=64px;" /> | <img src="https://image.flaticon.com/icons/svg/888/888859.svg" style="width:64px;height=64px;" /> | <img src="https://seeklogo.com/images/E/eclipse-logo-85FE4BEA34-seeklogo.com.png" style="width:64px;height=64px;" /> | <img src="https://image.flaticon.com/icons/svg/692/692041.svg" style="width:64px;height=64px;" /> |
+| <img src="https://image.flaticon.com/icons/svg/226/226777.svg" style="width:64px;height=64px;" /> | <img src="https://image.flaticon.com/icons/svg/888/888847.svg" style="width:64px;height=64px;" /> | <img src="https://image.flaticon.com/icons/svg/888/888859.svg" style="width:64px;height=64px;" /> | <img src="https://seeklogo.com/images/E/eclipse-logo-85FE4BEA34-seeklogo.com.png" style="width=64px;" /> | <img src="https://image.flaticon.com/icons/svg/692/692041.svg" style="width:64px;height=64px;" /> |
 | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
 |                             Java                             |                            CSS 3                             |                            HTML 5                            |                           Eclipse                            |                          Thymeleaf                           |
 
