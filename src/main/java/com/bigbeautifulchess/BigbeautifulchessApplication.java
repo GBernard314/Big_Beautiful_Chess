@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.bigbeautifulchess.engine.Board;
 import com.bigbeautifulchess.engine.Piece;
+import com.bigbeautifulchess.san.San;
 import com.bigbeautifulchess.tools.Coord;
 
 @SpringBootApplication
@@ -17,7 +18,11 @@ public class BigbeautifulchessApplication {
 		System.out.println("Main 2 started\n");
 		SpringApplication.run(BigbeautifulchessApplication.class, args);
 		
-		Board game = new Board(false);
+		String plateau = "0,0,0/|/|/|/|/|/|7,7,1/6,6,1|";
+		String historic = "k:2,4-e:4,5";
+		
+		Board game = new Board(plateau, 0,-1,0,0, "10:10:10", historic);
+		San san = new San();
 		
 		game.getCells()[0][4] = new Piece(0, 4, 1, 'k', false);
 		game.getCells()[1][4] = new Piece(1, 4, 1, 'p', false);
@@ -31,6 +36,8 @@ public class BigbeautifulchessApplication {
 		//game.eat(game.getPieceOnCell(4, 4), game.getPieceOnCell(5, 4));
 		game.printBoardSimple();
 		game.printMovements(game.getPieceOnCell(0, 3));
+		System.out.println(san.printSan(game));
+		
 		/*
 		
 		//ArrayList of coordinates to remove
