@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.bigbeautifulchess.domain.Game;
 import com.bigbeautifulchess.domain.User;
 import com.bigbeautifulchess.engine.Board;
+import com.bigbeautifulchess.engine.BoardInterface;
+import com.bigbeautifulchess.engine.CurrentBoard;
 import com.bigbeautifulchess.engine.Piece;
 import com.bigbeautifulchess.repository.GameRepository;
 import com.bigbeautifulchess.repository.UserRepository;
@@ -31,12 +33,7 @@ import com.bigbeautifulchess.service.AjaxResponse;
 @RequestMapping("/game")
 public class GameController {
 	
-	private Board b;
-	private Piece selectedPiece;
-	private int nbTours = 0;
-	
-	private User myself;
-	private User opponent;
+	private BoardInterface boardInterface;
 	
 	@Autowired
 	UserRepository userRepository;
@@ -50,10 +47,11 @@ public class GameController {
 	
 	@GetMapping("/new/{adversaire}")
 	public String initGame(Model model, Authentication authentication, @PathVariable String adversaire){
-		myself = userRepository.findByUsername(authentication.getName());
-		opponent = userRepository.findByUsername(adversaire);
-        System.out.println(myself.getUsername());
-        System.out.println(opponent.getUsername());
+		boardInterface = new CurrentBoard();
+		User white = userRepository.findByUsername(authentication.getName());
+		User black = userRepository.findByUsername(adversaire);
+		boardInterface.setWhitePlayer(white);
+		boardInterface.setBlackPlayer(black);
 		
 		return "redirect:/game/reset";
 	}
@@ -63,20 +61,8 @@ public class GameController {
 		Optional<Game> probableGame = gameRepository.findById(gameid);
 		if(probableGame.isPresent()) {
 			//Partie identifiée
-			Game g = probableGame.get();
-			//Board(String bdd, int turn, int result, int time_black, int time_white, String storage, String historic)
-			b = new Board(g.getBoard_info(), g.getNb_turn()%2, g.getFlag_winner(), g.getTime_user2(), g.getTime_user1(), g.getStorage(), g.getMouv());
-			List<User> usrs = g.getUsers();
-			if(usrs.size() == 2) {
-				myself = usrs.get(0);
-				opponent = usrs.get(1);
-				return "redirect:/game/play";
-			}
-			
-		}
-		else {
-			//Erreur : partie non identifiée
-			return "redirect:/";
+			boardInterface.loadBoard(probableGame.get());
+			return "redirect:/game/play";
 		}
 		
 		return "redirect:/";
@@ -96,16 +82,16 @@ public class GameController {
 	public String saveGameRepo(){
 		List <User> users = new ArrayList<>();
 
-		users.add(myself);
-		users.add(opponent);
+		users.add(boardInterface.getWhitePlayer());
+		users.add(boardInterface.getBlackPlayer());
 		
+		Board b = boardInterface.getBoard();
 		Game game = new Game();
 		game.setId(null);
-		game.setUsers(users);
 		game.setFlag_winner(b.getResult());
 		game.setBoard_info(b.cellsToString());
 		game.setForfeit(false); //TODO : forfait
-		game.setNb_turn(nbTours);
+		game.setNb_turn(boardInterface.getNbTurns());
 		game.setTime_user1(b.getTime_white());
 		game.setTime_user2(b.getTime_black());
 		game.setUsers(users);
@@ -120,6 +106,7 @@ public class GameController {
 		return "redirect:/game/ongoing";
 	}
 
+	/*Renvoie une liste de parties - le boooléen ongoing indique si l'on désire les parties en cours(true) ou terminées(false) */
 	private List<Game> getGames(User user, Boolean ongoing) {
 		List<Game> games = new ArrayList<>();
 		if(user != null) {
@@ -134,6 +121,7 @@ public class GameController {
 		return games;
 	}
 	
+	/*Renvoie une liste d'User représentant les amis de l'user passé en paramètre */
 	private List<User> getFriends(User user){
 		List<User> userlist = new ArrayList<>();
 		if(user != null) {
@@ -174,21 +162,17 @@ public class GameController {
 		return "game-history";
 	}
 	
-	@GetMapping("/lost")
-	public String lose(Model model) {
-		return "lost";
-	}
-	
 	@GetMapping("/play")
 	public String play(Model model, Authentication authentication) {
-		if(b == null) {
+		if(boardInterface.getBoard() == null) {
 			return "redirect:/game/reset";
 		}
-		if(myself == null) {
+		if(boardInterface.getWhitePlayer() == null) {
 			return "redirect:/";
 		}
-		System.out.println(b.getTurn());
-		model.addAttribute("board", b);
+		model.addAttribute("board", boardInterface.getBoard());
+		
+		Piece selectedPiece = boardInterface.getSelectedPiece();
 		model.addAttribute("pieceInSelection", selectedPiece);
 		if(selectedPiece != null) {
 			model.addAttribute("moves", selectedPiece.getMoves());
@@ -198,38 +182,33 @@ public class GameController {
 
 		model.addAttribute("userInfo", user);
 		model.addAttribute("friends", getFriends(user));
-		if(myself != null )
-			model.addAttribute("myself",myself);
-		if(opponent != null)
-			model.addAttribute("opponent",opponent);
+		if(boardInterface.getWhitePlayer() != null )
+			model.addAttribute("myself",boardInterface.getWhitePlayer());
+		if(boardInterface.getBlackPlayer() != null)
+			model.addAttribute("opponent",boardInterface.getBlackPlayer());
 		
-		System.out.println("is small castling ok ? " + b.isSmallCastlingOk());
-		System.out.println("is big castling ok ? " + b.isBigCastlingOk());
-		System.out.println("Egalite ? " + b.draw());
+		System.out.println("is small castling ok ? " + boardInterface.getBoard().isSmallCastlingOk());
+		System.out.println("is big castling ok ? " +  boardInterface.getBoard().isBigCastlingOk());
+		System.out.println("Egalite ? " +  boardInterface.getBoard().draw());
 		
 		return "play";
 	}
 	
 	@GetMapping("/reset")
 	public String reset(Model model) {
-		b = new Board();
-		
-		/* Uncomment to see game in console : */ 
-		b.printBoardSimple();
-		nbTours = 0;
-		
-		selectedPiece = null;
-		
+		boardInterface.resetBoard();
 		return "redirect:/game/play";
 	}
 	
 	@GetMapping("/play/select/{x},{y}")
 	public String selectPiece( @PathVariable int x,@PathVariable int y,Model model, Authentication auth) {
+		Board b = boardInterface.getBoard();
+		Piece selectedPiece = boardInterface.getSelectedPiece();
 		if(b == null) {
 			return "redirect:/game/reset";
 		}
 		Piece clickedCell = b.getPieceOnCell(x,y);
-		boolean isopponent = (auth.getName().equals(opponent.getUsername()))? true : false;
+		boolean isopponent = (auth.getName().equals(boardInterface.getBlackPlayer().getUsername()))? true : false;
 		int cellColor = clickedCell.getColor();
 		
 		if(isopponent) { //Joueur noir
@@ -243,13 +222,13 @@ public class GameController {
 					//Joueur noir clique sur blanc, on redirige
 					return "redirect:/game/play";
 				}
-				selectedPiece = b.getPieceOnCell(x,y);
-				selectedPiece.printPiece();
+				boardInterface.setSelectedPiece(x,y);
+				boardInterface.getSelectedPiece().printPiece();
 			}
 			else{ //Un pion est deja selectionné, on deplace ou mange
-				b.eat(selectedPiece, clickedCell);
-				selectedPiece = null;
-				nbTours++;
+				boardInterface.getBoard().eat(boardInterface.getSelectedPiece(), clickedCell);
+				boardInterface.emptySelectedPiece();
+				boardInterface.incrementTurns();
 			}
 		}else { //Joueur blanc
 			System.out.println("Joueur blanc détécté");
@@ -262,13 +241,13 @@ public class GameController {
 					//Joueur blanc clique sur noir
 					return "redirect:/game/play";
 				}
-				selectedPiece = b.getPieceOnCell(x,y);
-				selectedPiece.printPiece();
+				boardInterface.setSelectedPiece(x,y);
+				boardInterface.getSelectedPiece().printPiece();
 			}
 			else{ //Un pion est deja selectionné, on deplace ou mange
-				b.eat(selectedPiece, clickedCell);
-				selectedPiece = null;
-				nbTours++;
+				boardInterface.getBoard().eat(boardInterface.getSelectedPiece(), clickedCell);
+				boardInterface.emptySelectedPiece();
+				boardInterface.incrementTurns();
 			}
 		}
 		
@@ -285,10 +264,4 @@ public class GameController {
 		return "redirect:/game/play";
 	}
 	
-	
-	@GetMapping(value = "/game/play/ajax")
-	  public AjaxResponse getResource() {
-		AjaxResponse response = new AjaxResponse("Done", b);
-	    return response;
-	  }
 }
