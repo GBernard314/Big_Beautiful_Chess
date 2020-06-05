@@ -32,7 +32,7 @@ This project was made in 4 days in a row, as a school subject given by <a href="
 
 []: https://github.com/PDesoomer	"Pierre DESOOMER :"
 
-<a href="">Pierre DESOOMER</a> :
+<a href="https://github.com/PDesoomer">Pierre DESOOMER</a> :
 
 - Managed the database relation with the controller.
 
