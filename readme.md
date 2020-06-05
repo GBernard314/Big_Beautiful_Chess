@@ -1,7 +1,6 @@
 # Big Beautiful Chess
 
 ---
-[![time tracker](https://wakatime.com/badge/github/Azarogue/BigBeautifulBhess.svg)](https://wakatime.com/badge/github/Azarogue/BigBeautifulChess)
 ![GitHub contributors](https://img.shields.io/github/contributors/Azarogue/BigBeautifulChess?color=orange) 
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/azarogue/BigBeautifulChess?color=blue) 
 
