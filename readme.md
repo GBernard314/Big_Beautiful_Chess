@@ -18,7 +18,7 @@
 
 **BBC** is ~~the British Broadcasting Corporation~~ **Big Beautiful Chess** the newest chess game, **ONLINE**, with friends list management which help playing chess with your friends all over the world.
 
-This project was made in 4 days in a row, as a school subject given by <a href=" https://github.com/sminet">Sebastien MINET</a> through the <a href="https://www.isen.fr/">ISEN</a> curriculum.
+This project was made in 4 days in a row, as a school subject given by <a href="https://github.com/sminet">Sebastien MINET</a> through the <a href="https://www.isen.fr/">ISEN</a> curriculum.
 
 ## What has been implemented yet
 
@@ -34,15 +34,15 @@ This project was made in 4 days in a row, as a school subject given by <a href="
 
 - Managed the database relation with the controller.
 
-<a href=" https://github.com/TibRib">Thibaud SIMON</a> :
+<a href="https://github.com/TibRib">Thibaud SIMON</a> :
 
 - Worked on the controllers, the links between front end and back end.
 
-<a href=" https://github.com/Jed13">Jeremie DUFOUR</a> :
+<a href="https://github.com/Jed13">Jeremie DUFOUR</a> :
 
 - In charge of the translation of every move played in the game in the **S**hort **A**lgebraic **N**otation.
 
-<a href=" https://github.com/Azarogue">Guillaume BERNARD</a> :
+<a href="https://github.com/Azarogue">Guillaume BERNARD</a> :
 
 - Game engine, the one to blame for not knowing the rules well enough.
 
