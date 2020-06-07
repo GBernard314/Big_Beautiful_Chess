@@ -35,17 +35,29 @@ Default user :
 test / test123
 ```
 
+### User Case :
 
+To launch a game, as wanted, you have to have at least a friend. You can add one using : 
+
+``` 
+yourURL:8080/addFriend/username
+```
+
+(obviously, that one user needs to exist ... ! )
 
 ## Collaborators
 
 <a href="https://github.com/PDesoomer">Pierre DESOOMER</a> :
 
-- Managed the database relation with the controller.
+- Managed the database stuff (Query, Management, HQL).
+- Did the security of password with encryption with **Spring Security**.
+- Worked out the appealing login/register page.
 
 <a href="https://github.com/TibRib">Thibaud SIMON</a> :
 
 - Worked on the controllers, the links between front end and back end.
+- Did the template work on **ThymeLeaf** framework and fragments, along with CSS and JS.
+- The one that did the majority of the controllers.
 
 <a href="https://github.com/Jed13">Jeremie DUFOUR</a> :
 
@@ -53,7 +65,11 @@ test / test123
 
 <a href="https://github.com/Azarogue">Guillaume BERNARD</a> :
 
-- Game engine, the one to blame for not knowing the rules well enough.
+- Did the game engine, the one to blame for not knowing the rules well enough.
+
+- Also the one to acknowledge when everything is working smoothly especially weird moves.
+
+  
 
 
 
