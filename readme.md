@@ -63,7 +63,7 @@ yourURL:8080/addFriend/username
 
 - In charge of the translation of every move played in the game in the **S**hort **A**lgebraic **N**otation.
 
-<a href="https://github.com/Azarogue">Guillaume BERNARD</a> :
+<a href="https://github.com/GBernard314">Guillaume BERNARD</a> :
 
 - Did the game engine, the one to blame for not knowing the rules well enough.
 
