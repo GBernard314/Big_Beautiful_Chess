@@ -2,6 +2,8 @@
 
 ![GitHub contributors](https://img.shields.io/github/contributors/GBernard314/Big_Beautiful_Chess?color=orange) 
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/GBernard314/Big_Beautiful_Chess?color=blue) 
+![GitHub repo size in bytes](https://img.shields.io/github/repo-size/GBernard314/Big_Beautiful_Chess?color=blue) 
+![GitHub top language](https://img.shields.io/github/languages/top/GBernard314/Big_Beautiful_Chess?color=blue) 
 
 ## Table of Contents
 
