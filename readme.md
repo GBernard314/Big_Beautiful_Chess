@@ -1,8 +1,7 @@
 # Big Beautiful Chess
 
----
-![GitHub contributors](https://img.shields.io/github/contributors/Azarogue/BigBeautifulChess?color=orange) 
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/azarogue/BigBeautifulChess?color=blue) 
+![GitHub contributors](https://img.shields.io/github/contributors/GBernard314/BigBeautifulChess?color=orange) 
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/GBernard314/BigBeautifulChess?color=blue) 
 
 ## Table of Contents
 
